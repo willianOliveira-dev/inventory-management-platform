@@ -8,7 +8,7 @@
         "build": "tsc",
         "start": "node dist/app.js"
     },
-      "repository": {
+    "repository": {
         "type": "git",
         "url": "git+https://github.com/willianOliveira-dev/dashboard.git"
     },
@@ -19,6 +19,7 @@
     },
     "homepage": "https://github.com/willianOliveira-dev/dashboard#readme",
     "devDependencies": {
+        "@types/dotenv": "^6.1.1",
         "@types/express": "^5.0.3",
         "@types/node": "^24.2.1",
         "ts-node": "^10.9.2",
@@ -26,6 +27,7 @@
     },
     "dependencies": {
         "cors": "^2.8.5",
+        "dotenv": "^17.2.1",
         "express": "^5.1.0"
     }
 }
