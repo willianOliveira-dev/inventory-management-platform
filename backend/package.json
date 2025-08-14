@@ -1,0 +1,31 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.ts",
+    "scripts": {
+        "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/app.ts",
+        "build": "tsc",
+        "start": "node dist/app.js"
+    },
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/willianOliveira-dev/dashboard.git"
+    },
+    "author": "Willian Oliveira",
+    "license": "Proprietary",
+    "bugs": {
+        "url": "https://github.com/willianOliveira-dev/dashboard/issues"
+    },
+    "homepage": "https://github.com/willianOliveira-dev/dashboard#readme",
+    "devDependencies": {
+        "@types/express": "^5.0.3",
+        "@types/node": "^24.2.1",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.2"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^5.1.0"
+    }
+}
