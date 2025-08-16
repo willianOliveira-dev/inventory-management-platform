@@ -5,7 +5,10 @@
         "outDir": "./dist",
         "rootDir": "./src",
         "baseUrl": "./src",
-        "paths": {},
+        "paths": {
+            "@config/*": ["config/*"],
+            "@utils/*": ["utils/*"]
+        },
         "moduleResolution": "nodenext",
         "esModuleInterop": true,
         "strict": true,
