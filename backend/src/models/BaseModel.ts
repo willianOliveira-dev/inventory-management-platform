@@ -7,7 +7,6 @@ import type { ResultSetHeader, RowDataPacket } from 'mysql2';
  * The BaseModel class serves as the basis for CRUD operations on the 'users', 'items', 'categories' and 'stock_history' tables.
  */
 export default class BaseModel {
-    
     private static _tableIdMap: Entities = {
         users: 'user_id',
         items: 'item_id',
@@ -136,7 +135,7 @@ export default class BaseModel {
             const sqlInsert: string = `INSERT INTO ${table} (${columns}) VALUES (${placeholders});`;
             const sqlSelect: string = `SELECT * FROM ${table} WHERE ${columnId} = ?;`;
 
-            await conn.query('BEGIN;');
+            await conn.beginTransaction();
 
             await conn.query<ResultSetHeader>(sqlInsert, valuesArray);
 
@@ -144,11 +143,11 @@ export default class BaseModel {
 
             const [resultSelect] = await conn.query<T[]>(sqlSelect, [idValue]);
 
-            await conn.query('COMMIT;');
+            await conn.commit();
 
             return resultSelect;
         } catch (error) {
-            await conn.query('ROLLBACK;');
+            await conn.rollback();
             BaseModel.errorHandler(error);
         } finally {
             conn.release();
@@ -182,13 +181,13 @@ export default class BaseModel {
 
             const sqlSelect = `SELECT * FROM ${table} WHERE ${columnId} = ?;`;
 
-            await conn.query('BEGIN;');
+            await conn.beginTransaction();
 
             const [queryUpdate] = await conn.query<ResultSetHeader>(sqlUpdate, [
                 ...valuesArray,
                 id,
             ]);
-            console.log(valuesArray, id)
+
             if (queryUpdate.affectedRows === 0) {
                 throw new NotFoundError(
                     `Record with ID ${id} not found in table ${table}`
@@ -197,11 +196,11 @@ export default class BaseModel {
 
             const [resultSelect] = await conn.query<T[]>(sqlSelect, [id]);
 
-            await conn.query('COMMIT;');
+            await conn.commit();
 
             return resultSelect;
         } catch (error) {
-            await conn.query('ROLLBACK;');
+            await conn.rollback();
             BaseModel.errorHandler(error);
         } finally {
             conn.release();
@@ -230,11 +229,11 @@ export default class BaseModel {
                 );
             }
             const sqlDelete = `DELETE FROM ${table} WHERE ${columnId} = ?;`;
-            await conn.query('BEGIN;');
+            await conn.beginTransaction();
             await conn.query<T[]>(sqlDelete, [id]);
-            await conn.query('COMMIT;');
+            await conn.commit();
         } catch (error) {
-            await conn.query('ROLLBACK;');
+            await conn.rollback();
             BaseModel.errorHandler(error);
         } finally {
             conn.release();
