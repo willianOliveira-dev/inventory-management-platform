@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS stock_history(
     new_price_cents INT NOT NULL,
     old_quantity INT NOT NULL,
     new_quantity INT NOT NULL,
-    operation VARCHAR(10) CHECK (operation IN ('ADD', 'DELETE', 'UPDATE')),
+    operation VARCHAR(10) CHECK (operation IN ('ADD', 'UPDATE')),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_history PRIMARY KEY (history_id),
 	CONSTRAINT fk_user_history FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,

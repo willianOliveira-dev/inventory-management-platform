@@ -221,15 +221,23 @@ export default class BaseModel {
         const conn = await pool.getConnection();
         try {
             const columnId = BaseModel._columnIdExist(table);
-            const sqlSelect = `SELECT * FROM ${table} WHERE ${columnId} = ?;`;
-            const [resultSelect] = await conn.query<T[]>(sqlSelect, [id]);
-            if (resultSelect.length === 0) {
+            const sqlSelect = `SELECT COUNT(*) AS count FROM ${table} WHERE ${columnId} = ?;`;
+
+            await conn.beginTransaction();
+            
+            const [resultSelect] = await conn.query<RowDataPacket[]>(
+                sqlSelect,
+                [id]
+            );
+
+            if (resultSelect[0].count === 0) {
                 throw new NotFoundError(
                     `Record with ID ${id} not found in table ${table}`
                 );
             }
+
             const sqlDelete = `DELETE FROM ${table} WHERE ${columnId} = ?;`;
-            await conn.beginTransaction();
+
             await conn.query<T[]>(sqlDelete, [id]);
             await conn.commit();
         } catch (error) {

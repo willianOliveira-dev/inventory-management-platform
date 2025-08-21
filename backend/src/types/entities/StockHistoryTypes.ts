@@ -8,6 +8,6 @@ export interface StockHistory extends RowDataPacket {
     new_price_cents: number;
     old_quantity: number;
     new_quantity: number;
-    operation: 'ADD' | 'UPDATE' | 'DELETE';
+    operation: 'ADD' | 'UPDATE'
     created_at: Date;
 }

@@ -23,10 +23,20 @@ const stockHistoryModel: StockHistoryModel = new StockHistoryModel();
  */
 
 export default class ItemService {
-    // TODO CRIAR DOCUMENTAçÃO
     private static async registerStockHistory(
         data: Omit<StockHistory, 'history_id'>
     ) {
+        /**
+         * Registers a new stock history entry in the 'stock_history' table.
+         *
+         * This method is used to log inventory changes such as price updates or quantity adjustments.
+         * It omits the `history_id`, which is generated internally no momento da criação.
+         *
+         * @param data - An object containing stock movement details, excluding `history_id`.
+         * @returns A Promise that resolves when the stock history is successfully recorded.
+         * @throws Error if the insertion fails or an unexpected issue occurs.
+         */
+
         try {
             const stockMovements = {
                 ...data,
@@ -205,14 +215,18 @@ export default class ItemService {
         itemId: string
     ): Promise<Item> {
         /**
-         * Updates an existing item with new data.
-         * Applies formatting to the name if provided.
+         * Updates an existing item in the database with new values.
          *
-         * @param reqBody - The updated item data.
-         * @param itemId - The ID of the item to update.
-         * @returns A Promise that resolves to the updated Item object.
-         * @throws Error if the update fails.
+         * This method retrieves the current item data, applies updates from the request body,
+         * formats the name (if provided), and persists the changes. If the item's price or quantity
+         * has changed, it also registers a stock history entry to track the modification.
+         *
+         * @param reqBody - The validated data used to update the item, based on `ItemUpdateSchema`.
+         * @param itemId - The unique identifier of the item to be updated.
+         * @returns A Promise that resolves to the updated `Item` object.
+         * @throws Error if the item cannot be retrieved or updated.
          */
+
         const oldItemData = await this.getItemById(itemId);
 
         const updated_at: Date = new Date();
@@ -239,6 +253,24 @@ export default class ItemService {
                 'updated_at',
             ])
         );
+
+        if (
+            updatedItem.price_cents !== oldItemData.price_cents ||
+            updatedItem.current_quantity !== oldItemData.current_quantity
+        ) {
+            const stockHistoryPayload: Omit<StockHistory, 'history_id'> = {
+                item_id: itemId,
+                user_id: updatedItem.user_id,
+                old_price_cents: oldItemData.price_cents,
+                new_price_cents: updatedItem.price_cents,
+                old_quantity: oldItemData.current_quantity,
+                new_quantity: updatedItem.current_quantity,
+                operation: 'UPDATE',
+                created_at: new Date(),
+            };
+
+            await ItemService.registerStockHistory(stockHistoryPayload);
+        }
 
         return updatedItem;
     }

@@ -78,5 +78,6 @@ export default class ItemController {
          */
         const { id } = req.params;
         await itemService.deleteItem(id);
+        return res.status(204).send();
     }
 }

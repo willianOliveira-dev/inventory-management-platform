@@ -3,12 +3,6 @@ import pool from '@config/connect';
 import { Category } from 'types';
 import { RowDataPacket } from 'mysql2';
 
-//  if (count === 0) {
-//             throw new NotFoundError(
-//                 `Category with id "${categoryId}" does not exist.`
-//             );
-//         }
-
 const baseModel = new BaseModel();
 
 /**
