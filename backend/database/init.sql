@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS dashboard_db;
-USE dashboard_db;
+CREATE DATABASE IF NOT EXISTS control_panel_db;
+USE control_panel_db;
 
 CREATE TABLE IF NOT EXISTS users(
 	user_id CHAR(36),
@@ -39,6 +39,8 @@ CREATE TABLE IF NOT EXISTS stock_history(
 	history_id CHAR(36),
     item_id CHAR(36) NOT NULL,
     user_id CHAR(36) NOT NULL,
+    old_price_cents INT NOT NULL,
+    new_price_cents INT NOT NULL,
     old_quantity INT NOT NULL,
     new_quantity INT NOT NULL,
     operation VARCHAR(10) CHECK (operation IN ('ADD', 'DELETE', 'UPDATE')),

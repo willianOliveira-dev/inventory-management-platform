@@ -1,18 +1,12 @@
 import { type RowDataPacket } from 'mysql2';
 
-export interface User extends RowDataPacket {
+export interface UserBase {
     user_id: string;
     name: string;
     email: string;
     password: string;
-    created_at: string;
-    updated_at: string;
+    created_at: Date;
+    updated_at: Date;
 }
 
-export type UserColumnsArray =
-    | 'user_id'
-    | 'name'
-    | 'email'
-    | 'password'
-    | 'created_at'
-    | 'updated_at';
+export type User = UserBase & RowDataPacket;

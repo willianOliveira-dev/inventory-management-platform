@@ -7,7 +7,12 @@
         "baseUrl": "./src",
         "paths": {
             "@config/*": ["config/*"],
-            "@utils/*": ["utils/*"]
+            "@controllers/*": ["controllers/*"],
+            "@models/*": ["models/*"],
+            "@routes/*": ["routes/*"],
+            "@services/*": ["services/*"],
+            "@utils/*": ["utils/*"],
+            "@validations/*": ["validations/*"]
         },
         "moduleResolution": "nodenext",
         "esModuleInterop": true,
