@@ -1,4 +1,5 @@
 import BaseModel from '@models/BaseModel';
+import { v4 as uuid4 } from 'uuid';
 
 const baseModel = new BaseModel();
 
@@ -51,9 +52,16 @@ export default class StockHistoryModel {
         /**
          * Asynchronously creates a new stock history record in the 'stock_history' table.
          * @typeParam V The type of the values being inserted.
-         * @param stockHistoryValuesArray An array of values corresponding to the stock history fields.
+         * @param stockHistoryValuesArray An array of values corresponding to the stock history fields (excluding history_id).
          * @returns A Promise that resolves to an array of the newly created records.
+         * @throws Throws an error if the database operation fails.
          */
+        const history_id: string = uuid4();
+        const newStockHistoryValuesArray = [
+            history_id,
+            ...stockHistoryValuesArray,
+        ];
+
         return await baseModel.create(
             'stock_history',
             [
@@ -67,7 +75,7 @@ export default class StockHistoryModel {
                 'operation',
                 'created_at',
             ],
-            stockHistoryValuesArray
+            newStockHistoryValuesArray
         );
     }
 }

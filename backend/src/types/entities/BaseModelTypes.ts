@@ -2,7 +2,7 @@ export interface Entities {
     readonly users: string;
     readonly categories: string;
     readonly items: string;
-    readonly stockHistory: string;
+    readonly stock_history: string;
     readonly [table: string]: string;
 }
 

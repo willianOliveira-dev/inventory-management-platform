@@ -7,11 +7,12 @@ import type { ResultSetHeader, RowDataPacket } from 'mysql2';
  * The BaseModel class serves as the basis for CRUD operations on the 'users', 'items', 'categories' and 'stock_history' tables.
  */
 export default class BaseModel {
+    
     private static _tableIdMap: Entities = {
         users: 'user_id',
         items: 'item_id',
         categories: 'category_id',
-        stockHistory: 'history_id',
+        stock_history: 'history_id',
     };
 
     protected static errorHandler(error: unknown): never {

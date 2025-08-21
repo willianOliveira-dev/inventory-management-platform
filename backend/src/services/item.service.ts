@@ -4,22 +4,57 @@ import CategoryModel from '@models/CategoryModel';
 import toCapitalize from '@utils/toCapitalize';
 import extractObjectValues from '@utils/extractObjectValues';
 import updateData from '@utils/updateData';
+import StockHistoryModel from '@models/StockHistoryModel';
+import NotFoundError from '@utils/errors/NotFoundError';
 import { v4 as uuidv4 } from 'uuid';
 import { ItemSchema, ItemUpdateSchema } from '@validations/item.schema';
-import { Item, ItemBase } from 'types';
-import NotFoundError from '@utils/errors/NotFoundError';
+import { Item, ItemBase, StockHistory } from 'types';
 
 const itemModel: ItemModel = new ItemModel();
+const stockHistoryModel: StockHistoryModel = new StockHistoryModel();
 
 /**
  * Service class responsible for handling business logic related to items.
  * Provides methods to create, retrieve, update, and delete items.
  *
  * Use the ItemModel model to interact with the database.
+ * Uses the StockHistoryModel to create and track changes made by the client.
  * Apply validations, formatting, and error handling before delegating the model.
  */
 
 export default class ItemService {
+    // TODO CRIAR DOCUMENTAçÃO
+    private static async registerStockHistory(
+        data: Omit<StockHistory, 'history_id'>
+    ) {
+        try {
+            const stockMovements = {
+                ...data,
+            };
+
+            await stockHistoryModel.createStockHistory(
+                extractObjectValues(stockMovements, [
+                    'item_id',
+                    'user_id',
+                    'old_price_cents',
+                    'new_price_cents',
+                    'old_quantity',
+                    'new_quantity',
+                    'operation',
+                    'created_at',
+                ])
+            );
+        } catch (error: unknown) {
+            const errorMessage: string =
+                error instanceof Error
+                    ? error.message
+                    : 'Unknown error occurred';
+            throw new Error(
+                `Failed to register stock history: ${errorMessage}`
+            );
+        }
+    }
+
     private static async registerItem(reqBody: z.infer<typeof ItemSchema>) {
         /**
          * Prepares and validates item data before creation.
@@ -109,12 +144,24 @@ export default class ItemService {
         /**
          * Creates a new item after validating and formatting the input.
          *
-         * @param reqBody - The request body containing item data.
-         * @returns A Promise that resolves to the newly created Item object.
-         * @throws Error if the category is invalid or creation fails.
+         * This method performs the following steps:
+         * 1. Validates and registers the item using `ItemService.registerItem`.
+         * 2. Persists the item in the database via `itemModel.createItem`.
+         * 3. Automatically creates a stock history record with initial values.
+         *
+         * @param reqBody - The request body containing item data, validated against `ItemSchema`.
+         * @returns A Promise that resolves to the newly created `Item` object.
+         * @throws Error if the category is invalid, the item creation fails, or any unexpected issue occurs.
          */
         try {
             const itemData = await ItemService.registerItem(reqBody);
+            const {
+                item_id,
+                user_id,
+                price_cents,
+                current_quantity,
+                created_at,
+            } = itemData;
 
             const [newItem] = await itemModel.createItem(
                 extractObjectValues(itemData, [
@@ -129,6 +176,19 @@ export default class ItemService {
                     'updated_at',
                 ])
             );
+
+            const stockHistoryPayload: Omit<StockHistory, 'history_id'> = {
+                item_id,
+                user_id,
+                old_price_cents: 0,
+                new_price_cents: price_cents,
+                old_quantity: 0,
+                new_quantity: current_quantity,
+                operation: 'ADD',
+                created_at,
+            };
+
+            await ItemService.registerStockHistory(stockHistoryPayload);
 
             return newItem;
         } catch (error: unknown) {
