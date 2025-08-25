@@ -1,6 +1,8 @@
 import AuthService from '@services/auth.service';
 import UserService from '@services/user.service';
+import createResponse from '@utils/createResponse';
 import AuthSchema from '@validations/auth.schema';
+import { AuthResponseCode } from 'constants/responsesCode/auth';
 import { UserSchema } from '@validations/user.schema';
 import type { Request, Response } from 'express';
 import type { AuthTokens, User, ValidateRequest } from 'types';
@@ -34,11 +36,14 @@ export default class AuthController {
             secure: process.env.NODE_ENV === 'production',
         });
 
-        return res.status(200).json({
-            status: 'success',
-            code: 'OK',
-            message: 'Logout successful.',
-        });
+        const response = createResponse(
+            'success',
+            AuthResponseCode.USER_LOGGED_OUT,
+            200,
+            'User logged out successfully'
+        );
+
+        return res.status(200).json(response);
     }
 
     public async register(
@@ -71,19 +76,23 @@ export default class AuthController {
             expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         });
 
-        return res.status(201).json({
-            status: 'success',
-            code: 'OK',
-            message: 'User registered successfully',
-            data: {
-                user: {
-                    id: user.user_id,
-                    name: user.name,
-                    email: user.email,
-                },
-                accessToken,
+        const data = {
+            user: {
+                id: user.user_id,
+                email: user.email,
             },
-        });
+            accessToken,
+        };
+
+        const response = createResponse(
+            'success',
+            AuthResponseCode.USER_REGISTERED,
+            201,
+            'User registered successfully',
+            data
+        );
+
+        return res.status(201).json(response);
     }
 
     public async login(req: ValidateRequest<typeof AuthSchema>, res: Response) {
@@ -112,18 +121,23 @@ export default class AuthController {
             expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         });
 
-        return res.json({
-            status: 'success',
-            code: 'OK',
-            message: 'User logged in successfully',
-            data: {
-                user: {
-                    user_id,
-                    email,
-                },
+        const data = {
+            user: {
+                user_id,
+                email,
             },
             accessToken,
-        });
+        };
+
+        const response = createResponse(
+            'success',
+            AuthResponseCode.USER_LOGGED_IN,
+            200,
+            'User logged in successfully',
+            data
+        );
+
+        return res.json(response);
     }
 
     public async refresh(req: Request<{}, {}, AuthTokens>, res: Response) {
@@ -148,11 +162,14 @@ export default class AuthController {
             expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         });
 
-        res.json({
-            status: 'success',
-            code: 'OK',
-            message: 'Access token successfully refreshed',
-            accessToken: newAccessToken,
-        });
+        const response = createResponse(
+            'success',
+            AuthResponseCode.ACCESS_TOKEN_REFRESHED,
+            200,
+            'Access token successfully refreshed',
+            newAccessToken
+        );
+
+        return res.status(200).json(response);
     }
 }

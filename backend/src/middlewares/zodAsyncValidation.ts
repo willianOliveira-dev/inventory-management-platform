@@ -27,6 +27,7 @@ export default function zodAsyncValidation<T extends z.ZodType>(schema: T) {
                 return res.status(422).json({
                     status: 'error',
                     code: 'VALIDATION_FAILED',
+                    statusCode: 422,
                     details: simplifiedErrors,
                 });
             }

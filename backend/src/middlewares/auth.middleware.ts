@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
+import { AuthResponseCode } from 'constants/responsesCode/auth';
 import type { Request, Response, NextFunction } from 'express';
-import { Payload } from 'types';
+import type { Payload } from 'types';
+import createResponse from '@utils/createResponse';
 
 export default function authMiddleware(
     req: Request,
@@ -22,13 +24,19 @@ export default function authMiddleware(
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
 
-    if (!token) {
-        return res.status(401).json({
-            status: 'error',
-            code: 'TOKEN_MISSING',
-            message: 'Token not provided',
-        });
+    if (!token && !authHeader?.startsWith('Bearer ')) {
+        return res
+            .status(401)
+            .json(
+                createResponse(
+                    'error',
+                    AuthResponseCode.TOKEN_MISSING,
+                    401,
+                    'Authorization header malformed or missing'
+                )
+            );
     }
+
     try {
         const payload = jwt.verify(
             token as string,
@@ -37,10 +45,15 @@ export default function authMiddleware(
         req.user = payload;
         next();
     } catch (error) {
-        return res.status(403).json({
-            status: 'error',
-            code: 'TOKEN_INVALID',
-            message: 'Invalid or expired token',
-        });
+        return res
+            .status(403)
+            .json(
+                createResponse(
+                    'error',
+                    AuthResponseCode.TOKEN_INVALID,
+                    403,
+                    'Invalid or expired token'
+                )
+            );
     }
 }

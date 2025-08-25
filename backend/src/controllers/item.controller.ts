@@ -1,7 +1,9 @@
 import ItemService from '@services/item.service';
+import createResponse from '@utils/createResponse';
+import { ItemResponseCode } from 'constants/responsesCode/item';
 import { ItemSchema, ItemUpdateSchema } from '@validations/item.schema';
 import type { Request, Response } from 'express';
-import { Item, ValidateRequest } from 'types';
+import type { Item, ValidateRequest } from 'types';
 
 const itemService: ItemService = new ItemService();
 
@@ -21,7 +23,15 @@ export default class ItemController {
          */
 
         const items: Item[] = await itemService.getAllItems();
-        return res.status(200).send(items);
+        const response = createResponse<Item[]>(
+            'success',
+            ItemResponseCode.ITEM_FETCH_SUCCESS,
+            200,
+            'Items retrieved successfully',
+            items
+        );
+
+        return res.status(200).send(response);
     }
 
     public async getItemById(req: Request, res: Response) {
@@ -34,7 +44,15 @@ export default class ItemController {
          */
         const { id } = req.params;
         const item: Item = await itemService.getItemById(id);
-        return res.status(200).send(item);
+        const response = createResponse<Item>(
+            'success',
+            ItemResponseCode.ITEM_FETCH_SUCCESS,
+            200,
+            `Successfully fetched item with ID ${id}`,
+            item
+        );
+
+        return res.status(200).send(response);
     }
 
     public async createItem(
@@ -49,7 +67,15 @@ export default class ItemController {
          * @returns HTTP 201 with the newly created Item object.
          */
         const item: Item = await itemService.createItem(req.body);
-        return res.status(201).send(item);
+        const response = createResponse<Item>(
+            'success',
+            ItemResponseCode.ITEM_CREATED,
+            201,
+            'Item created successfully',
+            item
+        );
+
+        return res.status(201).send(response);
     }
 
     public async updateItem(
@@ -65,7 +91,16 @@ export default class ItemController {
          */
         const { id } = req.params;
         const item: Item = await itemService.updateItem(req.body, id);
-        return res.status(200).send(item);
+
+        const response = createResponse<Item>(
+            'success',
+            ItemResponseCode.ITEM_UPDATED,
+            200,
+            `Successfully updated item with ID ${id}`,
+            item
+        );
+
+        return res.status(200).send(response);
     }
 
     public async deleteItem(req: Request, res: Response) {
@@ -78,6 +113,14 @@ export default class ItemController {
          */
         const { id } = req.params;
         await itemService.deleteItem(id);
-        return res.status(204).send();
+        
+        const response = createResponse<Item>(
+            'success',
+            ItemResponseCode.ITEM_DELETED,
+            200,
+            `Item with ID ${id} successfully deleted`
+        );
+
+        return res.status(200).send(response);
     }
 }

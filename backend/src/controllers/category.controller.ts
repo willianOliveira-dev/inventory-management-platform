@@ -1,7 +1,9 @@
 import CategoryService from '@services/category.service';
 import CategorySchema from '@validations/category.schema';
+import createResponse from '@utils/createResponse';
+import { CategoryResponseCode } from 'constants/responsesCode/category';
+import type { Category, ValidateRequest } from 'types';
 import type { Request, Response } from 'express';
-import { Category, ValidateRequest } from 'types';
 
 const categoryService = new CategoryService();
 
@@ -20,7 +22,16 @@ export default class CategoryController {
          * @returns HTTP 200 with an array of Category objects.
          */
         const categories: Category[] = await categoryService.getAllCategories();
-        return res.status(200).send(categories);
+
+        const response = createResponse<Category[]>(
+            'success',
+            CategoryResponseCode.CATEGORY_FETCH_SUCCESS,
+            200,
+            'Categories retrieved successfully',
+            categories
+        );
+
+        return res.status(200).send(response);
     }
 
     public async getCategoryById(req: Request, res: Response) {
@@ -33,7 +44,16 @@ export default class CategoryController {
          */
         const { id } = req.params;
         const category: Category = await categoryService.getCategoryById(id);
-        return res.status(200).send(category);
+
+        const response = createResponse<Category>(
+            'success',
+            CategoryResponseCode.CATEGORY_FETCH_SUCCESS,
+            200,
+            `Successfully fetched category with ID ${id}`,
+            category
+        );
+
+        return res.status(200).send(response);
     }
 
     public async createCategory(
@@ -50,7 +70,16 @@ export default class CategoryController {
         const category: Category = await categoryService.createCategory(
             req.body
         );
-        return res.status(201).send(category);
+
+        const response = createResponse<Category>(
+            'success',
+            CategoryResponseCode.CATEGORY_CREATED,
+            201,
+            'Category created successfully',
+            category
+        );
+
+        return res.status(201).send(response);
     }
 
     public async updateCategory(
@@ -69,7 +98,16 @@ export default class CategoryController {
             req.body,
             id
         );
-        return res.status(200).send(category);
+
+        const response = createResponse<Category>(
+            'success',
+            CategoryResponseCode.CATEGORY_UPDATED,
+            200,
+            `Successfully updated category with ID ${id}`,
+            category
+        );
+
+        return res.status(200).send(response);
     }
 
     public async deleteCategory(req: Request, res: Response) {
@@ -82,6 +120,14 @@ export default class CategoryController {
          */
         const { id } = req.params;
         await categoryService.deleteCategory(id);
-        return res.status(204).send();
+
+        const response = createResponse<Category>(
+            'success',
+            CategoryResponseCode.CATEGORY_DELETED,
+            200,
+            `Category with ID ${id} successfully deleted`
+        );
+
+        return res.status(200).send(response);
     }
 }

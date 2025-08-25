@@ -1,6 +1,8 @@
 import UserService from 'services/user.service';
-import type { Request, Response } from 'express';
+import createResponse from '@utils/createResponse';
+import { UserResponseCode } from 'constants/responsesCode/user';
 import { UserSchema, UserUpdateSchema } from '@validations/user.schema';
+import type { Request, Response } from 'express';
 import type { User, ValidateRequest } from 'types';
 
 const userService = new UserService();
@@ -21,7 +23,15 @@ export default class UserController {
          */
 
         const users: User[] = await userService.getAllUsers();
-        return res.status(200).send(users);
+        const response = createResponse<User[]>(
+            'success',
+            UserResponseCode.USER_FETCH_SUCCESS,
+            200,
+            'Users retrieved successfully',
+            users
+        );
+
+        return res.status(200).send(response);
     }
 
     public async getUserById(req: Request, res: Response) {
@@ -34,7 +44,16 @@ export default class UserController {
          */
         const { id } = req.params;
         const user: User = await userService.getUserById(id);
-        return res.status(200).send(user);
+
+        const response = createResponse<User>(
+            'success',
+            UserResponseCode.USER_FETCH_SUCCESS,
+            200,
+            `Successfully fetched user with ID ${id}`,
+            user
+        );
+
+        return res.status(200).send(response);
     }
 
     public async createUser(
@@ -49,7 +68,16 @@ export default class UserController {
          * @returns HTTP 201 with the newly created User object.
          */
         const user: User = await userService.createUser(req.body);
-        return res.status(201).send(user);
+
+        const response = createResponse<User>(
+            'success',
+            UserResponseCode.USER_CREATED,
+            201,
+            'User created successfully',
+            user
+        );
+
+        return res.status(201).send(response);
     }
 
     public async updateUser(
@@ -65,7 +93,15 @@ export default class UserController {
          */
         const { id } = req.params;
         const user: User = await userService.updateUser(req.body, id);
-        return res.status(200).send(user);
+        const response = createResponse<User>(
+            'success',
+            UserResponseCode.USER_UPDATED,
+            200,
+            `Successfully updated user with ID ${id}`,
+            user
+        );
+
+        return res.status(200).send(response);
     }
 
     public async deleteUser(req: Request, res: Response) {
@@ -78,6 +114,13 @@ export default class UserController {
          */
         const { id } = req.params;
         await userService.deleteUser(id);
-        return res.status(204);
+        const response = createResponse<User>(
+            'success',
+            UserResponseCode.USER_DELETED,
+            200,
+            `User with ID ${id} successfully deleted`
+        );
+
+        return res.status(200).send(response);
     }
 }
