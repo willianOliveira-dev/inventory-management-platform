@@ -3,9 +3,11 @@ import CategoryModel from '@models/CategoryModel';
 import extractObjectValues from '@utils/extractObjectValues';
 import toCapitalize from '@utils/toCapitalize';
 import CategorySchema from '@validations/category.schema';
+import handleServiceError from '@utils/handleServiceError';
 import updateData from '@utils/updateData';
 import { v4 as uuidv4 } from 'uuid';
 import { Category, CategoryBase } from 'types';
+import ValidationError from '@errors/http/ValidationError';
 
 const categoryModel: CategoryModel = new CategoryModel();
 
@@ -29,11 +31,7 @@ export default class CategoryService {
                 await categoryModel.getAllCategories();
             return categories;
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Failed to fetch all categories: ${errorMessage}`);
+            handleServiceError(error, 'Failed to fetch all categories');
         }
     }
 
@@ -50,13 +48,7 @@ export default class CategoryService {
             );
             return category;
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(
-                `Failed to search for category by id: ${errorMessage}`
-            );
+            handleServiceError(error, 'Failed to search for category by id');
         }
     }
 
@@ -78,7 +70,7 @@ export default class CategoryService {
             const exists = await CategoryModel.categoryExistsByName({ name });
 
             if (exists) {
-                throw new Error(
+                throw new ValidationError(
                     `The category "${name}" already exists. The creation has been canceled.`
                 );
             }
@@ -102,11 +94,7 @@ export default class CategoryService {
 
             return newCategory;
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Failed to create category: ${errorMessage}`);
+            handleServiceError(error, 'Failed to create category');
         }
     }
 
@@ -121,26 +109,31 @@ export default class CategoryService {
          * @returns A Promise that resolves to the updated Category object.
          * @throws Throws an error if the update fails.
          */
-        const oldCategoryData = await this.getCategoryById(categoryId);
-        const updated_at: Date = new Date();
-        name = toCapitalize(name);
 
-        const newData: CategoryBase = updateData<CategoryBase>(
-            oldCategoryData,
-            { name }
-        );
+        try {
+            const oldCategoryData = await this.getCategoryById(categoryId);
+            const updated_at: Date = new Date();
+            name = toCapitalize(name);
 
-        const updatedCategoryObject = { ...newData, updated_at };
-        const [updatedCategory]: Category[] =
-            await categoryModel.updateCategory(
-                categoryId,
-                extractObjectValues(updatedCategoryObject, [
-                    'name',
-                    'updated_at',
-                ])
+            const newData: CategoryBase = updateData<CategoryBase>(
+                oldCategoryData,
+                { name }
             );
 
-        return updatedCategory;
+            const updatedCategoryObject = { ...newData, updated_at };
+            const [updatedCategory]: Category[] =
+                await categoryModel.updateCategory(
+                    categoryId,
+                    extractObjectValues(updatedCategoryObject, [
+                        'name',
+                        'updated_at',
+                    ])
+                );
+
+            return updatedCategory;
+        } catch (error: unknown) {
+            handleServiceError(error, 'Failed to update category');
+        }
     }
 
     public async deleteCategory(categoryId: string) {
@@ -150,6 +143,10 @@ export default class CategoryService {
          * @returns A Promise that resolves when the category is successfully deleted.
          * @throws Throws an error if the deletion fails.
          */
-        await categoryModel.deleteCategory(categoryId);
+        try {
+            await categoryModel.deleteCategory(categoryId);
+        } catch (error: unknown) {
+            handleServiceError(error, 'Failed to delete category by id');
+        }
     }
 }

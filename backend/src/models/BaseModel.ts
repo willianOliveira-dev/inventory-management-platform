@@ -1,5 +1,5 @@
 import pool from '@config/connect';
-import NotFoundError from '@utils/errors/NotFoundError';
+import NotFoundError from '@errors/http/NotFoundError';
 import type { Entities, TableName } from 'types';
 import type { ResultSetHeader, RowDataPacket } from 'mysql2';
 
@@ -21,7 +21,7 @@ export default class BaseModel {
          * @param error The error to handle.
          * @throws Always throws an Error instance.
          */
-        if (error instanceof Error) {
+        if (error instanceof NotFoundError) {
             throw error;
         }
         throw new Error(String(error));

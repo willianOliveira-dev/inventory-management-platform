@@ -8,6 +8,7 @@
         "paths": {
             "@config/*": ["config/*"],
             "@controllers/*": ["controllers/*"],
+            "@errors/*": ["errors/*"],
             "@models/*": ["models/*"],
             "@routes/*": ["routes/*"],
             "@services/*": ["services/*"],

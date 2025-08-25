@@ -5,7 +5,8 @@ import toCapitalize from '@utils/toCapitalize';
 import extractObjectValues from '@utils/extractObjectValues';
 import updateData from '@utils/updateData';
 import StockHistoryModel from '@models/StockHistoryModel';
-import NotFoundError from '@utils/errors/NotFoundError';
+import handleServiceError from '@utils/handleServiceError';
+import NotFoundError from '@errors/http/NotFoundError';
 import { v4 as uuidv4 } from 'uuid';
 import { ItemSchema, ItemUpdateSchema } from '@validations/item.schema';
 import { Item, ItemBase, StockHistory } from 'types';
@@ -55,13 +56,7 @@ export default class ItemService {
                 ])
             );
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(
-                `Failed to register stock history: ${errorMessage}`
-            );
+            handleServiceError(error, 'Failed to register stock history');
         }
     }
 
@@ -120,11 +115,7 @@ export default class ItemService {
             const items: Item[] = await itemModel.getAllItems();
             return items;
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Failed to fetch all items: ${errorMessage}`);
+            handleServiceError(error, 'Failed to fetch all items');
         }
     }
 
@@ -140,11 +131,7 @@ export default class ItemService {
             const [item]: Item[] = await itemModel.getItemById(itemId);
             return item;
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Failed to search for item by id: ${errorMessage}`);
+            handleServiceError(error, 'Failed to search for item by id');
         }
     }
 
@@ -202,11 +189,7 @@ export default class ItemService {
 
             return newItem;
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Failed to create item: ${errorMessage}`);
+            handleServiceError(error, 'Failed to create item');
         }
     }
 
@@ -227,52 +210,59 @@ export default class ItemService {
          * @throws Error if the item cannot be retrieved or updated.
          */
 
-        const oldItemData = await this.getItemById(itemId);
+        try {
+            const oldItemData = await this.getItemById(itemId);
 
-        const updated_at: Date = new Date();
+            const updated_at: Date = new Date();
 
-        const newData: ItemBase = updateData<ItemBase>(oldItemData, reqBody);
+            const newData: ItemBase = updateData<ItemBase>(
+                oldItemData,
+                reqBody
+            );
 
-        if (newData.name !== undefined) {
-            newData.name = toCapitalize(newData.name);
-        }
+            if (newData.name !== undefined) {
+                newData.name = toCapitalize(newData.name);
+            }
 
-        const updatedItemObject = {
-            ...newData,
-            updated_at,
-        };
-
-        const [updatedItem] = await itemModel.updateItem(
-            itemId,
-            extractObjectValues(updatedItemObject, [
-                'name',
-                'category_id',
-                'price_cents',
-                'description',
-                'current_quantity',
-                'updated_at',
-            ])
-        );
-
-        if (
-            updatedItem.price_cents !== oldItemData.price_cents ||
-            updatedItem.current_quantity !== oldItemData.current_quantity
-        ) {
-            const stockHistoryPayload: Omit<StockHistory, 'history_id'> = {
-                item_id: itemId,
-                user_id: updatedItem.user_id,
-                old_price_cents: oldItemData.price_cents,
-                new_price_cents: updatedItem.price_cents,
-                old_quantity: oldItemData.current_quantity,
-                new_quantity: updatedItem.current_quantity,
-                operation: 'UPDATE',
-                created_at: new Date(),
+            const updatedItemObject = {
+                ...newData,
+                updated_at,
             };
 
-            await ItemService.registerStockHistory(stockHistoryPayload);
-        }
+            const [updatedItem] = await itemModel.updateItem(
+                itemId,
+                extractObjectValues(updatedItemObject, [
+                    'name',
+                    'category_id',
+                    'price_cents',
+                    'description',
+                    'current_quantity',
+                    'updated_at',
+                ])
+            );
 
-        return updatedItem;
+            if (
+                updatedItem.price_cents !== oldItemData.price_cents ||
+                updatedItem.current_quantity !== oldItemData.current_quantity
+            ) {
+                const stockHistoryPayload: Omit<StockHistory, 'history_id'> = {
+                    item_id: itemId,
+                    user_id: updatedItem.user_id,
+                    old_price_cents: oldItemData.price_cents,
+                    new_price_cents: updatedItem.price_cents,
+                    old_quantity: oldItemData.current_quantity,
+                    new_quantity: updatedItem.current_quantity,
+                    operation: 'UPDATE',
+                    created_at: new Date(),
+                };
+
+                await ItemService.registerStockHistory(stockHistoryPayload);
+            }
+
+            return updatedItem;
+        } catch (error: unknown) {
+            handleServiceError(error, 'Failed to update Item');
+        }
     }
 
     public async deleteItem(itemId: string): Promise<void> {
@@ -286,11 +276,7 @@ export default class ItemService {
         try {
             await itemModel.deleteItem(itemId);
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Failed to delete item by id: ${errorMessage}`);
+            handleServiceError(error, 'Failed to delete item by id');
         }
     }
 }

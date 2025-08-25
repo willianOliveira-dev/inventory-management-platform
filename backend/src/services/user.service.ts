@@ -4,11 +4,13 @@ import updateData from '@utils/updateData';
 import extractObjectValues from '@utils/extractObjectValues';
 import toCapitalize from '@utils/toCapitalize';
 import encryptPassword from '@utils/encrypt';
-import BadRequest from '@utils/errors/BadRequest';
-import NotFoundError from '@utils/errors/NotFoundError';
+import ValidationError from '@errors/http/ValidationError';
+import NotFoundError from 'errors/http/NotFoundError';
+import handleServiceError from '@utils/handleServiceError';
 import { v4 as uuidv4 } from 'uuid';
 import { UserSchema, UserUpdateSchema } from '@validations/user.schema';
 import type { User, UserBase, UserLogin } from 'types';
+import { UserResponseCode } from 'constants/responsesCode/user';
 
 const userModel: UserModel = new UserModel();
 
@@ -21,8 +23,6 @@ const userModel: UserModel = new UserModel();
  */
 
 export default class UserService {
-    
-
     public async getAllUsers(): Promise<User[]> {
         /**
          * Retrieves all users from the database.
@@ -34,11 +34,7 @@ export default class UserService {
             const users: User[] = await userModel.getAllUsers();
             return users;
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Failed to fetch all users: ${errorMessage}`);
+            handleServiceError(error, 'Failed to fetch all users');
         }
     }
 
@@ -52,13 +48,10 @@ export default class UserService {
          */
         try {
             const [user]: User[] = await userModel.getUserById(userId);
+
             return user;
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Failed to search for user by id: ${errorMessage}`);
+            handleServiceError(error, 'Failed to search for user by id');
         }
     }
 
@@ -78,15 +71,15 @@ export default class UserService {
             const [user]: UserLogin[] = await userModel.getUserByEmail(email);
 
             if (!user) {
-                throw new NotFoundError('The email address does not exist.');
+                throw new NotFoundError(
+                    'The email address does not exist.',
+                    UserResponseCode.USER_NOT_FOUND
+                );
             }
 
             return user;
         } catch (error: unknown) {
-            if (error instanceof Error) {
-                throw new Error(error.message);
-            }
-            throw error;
+            handleServiceError(error, 'Failed to search for user by email');
         }
     }
 
@@ -118,11 +111,16 @@ export default class UserService {
                 updated_at,
             };
 
+            const userExist: boolean = await userModel.hasRecord(
+                'email',
+                email
+            );
 
-            const userExist: boolean = await userModel.hasRecord("email", email);
-
-            if(userExist) {
-                throw new BadRequest("This email is already in use.")
+            if (userExist) {
+                throw new ValidationError(
+                    'This email is already in use.',
+                    UserResponseCode.USER_EMAIL_ALREADY_EXISTS
+                );
             }
 
             const [newUser]: User[] = await userModel.createUser(
@@ -140,11 +138,7 @@ export default class UserService {
 
             return safeUser as User;
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Failed to create user: ${errorMessage}`);
+            handleServiceError(error, 'Failed to create user');
         }
     }
 
@@ -198,11 +192,7 @@ export default class UserService {
 
             return safeUser as User;
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Failed to update user: ${errorMessage}`);
+            handleServiceError(error, 'Failed to update user');
         }
     }
 
@@ -217,11 +207,7 @@ export default class UserService {
         try {
             await userModel.deleteUser(userId);
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Failed to delete user by id: ${errorMessage}`);
+            handleServiceError(error, 'Failed to delete user by id');
         }
     }
 }

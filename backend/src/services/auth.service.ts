@@ -2,7 +2,8 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import UserService from '@services/user.service';
 import RefreshTokenService from './refreshToken.service';
-import Unauthorized from '@utils/errors/ Unauthorized';
+import UnauthorizedError from '@errors/http/ UnauthorizedError';
+import handleServiceError from '@utils/handleServiceError';
 import { v4 as uuidv4 } from 'uuid';
 import type {
     UserLogin,
@@ -12,6 +13,7 @@ import type {
     AuthTokens,
     User,
 } from 'types';
+import { AuthResponseCode } from 'constants/responsesCode/auth';
 
 const refreshTokenService: RefreshTokenService = new RefreshTokenService();
 
@@ -74,7 +76,7 @@ export default class AuthService {
          * @param email - User's email.
          * @param password - User's password.
          * @returns Object containing accessToken and refreshToken.
-         * @throws Unauthorized if password is invalid.
+         * @throws UnauthorizedError if password is invalid.
          */
 
         const user: UserLogin = await new UserService().getUserByEmail(email);
@@ -85,7 +87,10 @@ export default class AuthService {
         );
 
         if (!isValidPassword) {
-            throw new Unauthorized('The password provided is incorrect.');
+            throw new UnauthorizedError(
+                'The password provided is incorrect.',
+                AuthResponseCode.AUTH_INVALID_PASSWORD
+            );
         }
 
         const payload: Payload = {
@@ -115,11 +120,7 @@ export default class AuthService {
                 expires_at
             );
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Login attempt unsuccessful: ${errorMessage}`);
+            handleServiceError(error, 'Login attempt unsuccessful');
         }
 
         // retorne os tokens. Recomendado: enviar refreshToken como cookie httpOnly.
@@ -158,7 +159,7 @@ export default class AuthService {
          *
          * @param refreshTokenRaw - Raw refresh token from client.
          * @returns Object containing new accessToken and refreshToken.
-         * @throws Unauthorized if token is invalid, revoked, or reused.
+         * @throws UnauthorizedError if token is invalid, revoked, or reused.
          */
 
         let payload;
@@ -169,7 +170,12 @@ export default class AuthService {
                 process.env.JWT_REFRESH_SECRET!
             );
         } catch (error: unknown) {
-            new Unauthorized('Invalid refresh token');
+
+            throw new UnauthorizedError(
+                'Invalid refresh token',
+                AuthResponseCode.AUTH_INVALID_REFRESH_TOKEN
+            );
+            
         }
 
         const { token_id, user_id, email } = payload as PayloadRefresh;
@@ -182,16 +188,18 @@ export default class AuthService {
             // Token signed, but doesn't exist in the database -> possible theft/reuse
             // Safe action: revoke all user tokens and force login
             await refreshTokenService.revokeAllForUser(user_id);
-            throw new Unauthorized(
-                'Refresh token reuse detected or unknown. All sessions revoked.'
+            throw new UnauthorizedError(
+                'Refresh token reuse detected or unknown. All sessions revoked.',
+                AuthResponseCode.SECURITY_TOKEN_REUSED
             );
         }
 
         if (tokenRow.revoked) {
             // possible attack (token already revoked and is being reused)
             await refreshTokenService.revokeAllForUser(user_id);
-            throw new Unauthorized(
-                'Refresh token has been revoked. All sessions revoked.'
+            throw new UnauthorizedError(
+                'Refresh token has been revoked. All sessions revoked.',
+                AuthResponseCode.SECURITY_TOKEN_REUSED
             );
         }
 
@@ -203,8 +211,9 @@ export default class AuthService {
         // Verify hash (compare raw token with saved hash)
         if (!match) {
             await refreshTokenService.revokeAllForUser(user_id);
-            throw new Unauthorized(
-                'Refresh token has been revoked. All sessions revoked.'
+            throw new UnauthorizedError(
+                'Refresh token has been revoked. All sessions revoked.',
+                AuthResponseCode.SECURITY_TOKEN_REUSED
             );
         }
 
@@ -234,7 +243,7 @@ export default class AuthService {
             newRefreshToken,
             newExpiresAt
         );
-        
+
         //  set replaced_by=newTokenId to track
         await refreshTokenService.revokeByTokenId(token_id, newTokenId);
 

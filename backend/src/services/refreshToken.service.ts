@@ -1,5 +1,6 @@
 import RefreshTokenModel from '@models/RefreshTokenModel';
 import encryptToken from '@utils/encrypt';
+import handleServiceError from '@utils/handleServiceError';
 import type { RefreshToken } from 'types';
 
 const refreshTokenModel: RefreshTokenModel = new RefreshTokenModel();
@@ -29,11 +30,7 @@ export default class RefreshTokenService {
 
             return newToken;
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Failed to save refresh token: ${errorMessage}`);
+            handleServiceError(error, 'Failed to save refresh token');
         }
     }
 
@@ -53,15 +50,8 @@ export default class RefreshTokenService {
                 [true, newTokenId, new Date()]
             );
             return tokenRow;
-            
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(
-                `Failed to search for token by id: ${errorMessage}`
-            );
+            handleServiceError(error, 'Failed to search for token by id');
         }
     }
 
@@ -82,11 +72,7 @@ export default class RefreshTokenService {
 
             return tokenRow;
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Failed to replace refresh token: ${errorMessage}`);
+            handleServiceError(error, 'Failed to replace refresh token');
         }
     }
 
@@ -98,13 +84,7 @@ export default class RefreshTokenService {
             );
             return revokeUser;
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(
-                `Failed to remove all user access: ${errorMessage}`
-            );
+            handleServiceError(error, 'Failed to remove all user access');
         }
     }
 
@@ -112,11 +92,7 @@ export default class RefreshTokenService {
         try {
             await refreshTokenModel.destroy(itemId);
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(`Failed to remove token: ${errorMessage}`);
+            handleServiceError(error, 'Failed to remove token');
         }
     }
 }

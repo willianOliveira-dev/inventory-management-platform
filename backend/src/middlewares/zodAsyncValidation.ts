@@ -31,7 +31,6 @@ export default function zodAsyncValidation<T extends z.ZodType>(schema: T) {
                     details: simplifiedErrors,
                 });
             }
-            next(error);
         }
     };
 }
