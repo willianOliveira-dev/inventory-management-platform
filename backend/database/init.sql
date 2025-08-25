@@ -35,6 +35,21 @@ CREATE TABLE IF NOT EXISTS items(
     CONSTRAINT fk_category_item FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE CASCADE
 );
 
+
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+    token_id CHAR(36) NOT NULL,
+    user_id CHAR(36) NOT NULL,
+    token VARCHAR(255) NOT NULL,
+    revoked BOOLEAN DEFAULT false,
+    replaced_by CHAR(36) DEFAULT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    expires_at DATETIME NOT NULL,
+    revoked_at DATETIME DEFAULT NULL,
+    CONSTRAINT pk_token PRIMARY KEY (token_id),
+    CONSTRAINT un_token UNIQUE (token),
+    CONSTRAINT fk_user_token FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS stock_history(
 	history_id CHAR(36),
     item_id CHAR(36) NOT NULL,

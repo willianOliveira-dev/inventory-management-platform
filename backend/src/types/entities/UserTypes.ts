@@ -10,3 +10,5 @@ export interface UserBase {
 }
 
 export type User = UserBase & RowDataPacket;
+
+

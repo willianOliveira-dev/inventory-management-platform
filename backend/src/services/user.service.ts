@@ -3,10 +3,12 @@ import UserModel from '@models/UserModel';
 import updateData from '@utils/updateData';
 import extractObjectValues from '@utils/extractObjectValues';
 import toCapitalize from '@utils/toCapitalize';
-import encryptPassword from '@utils/encryptPassword';
+import encryptPassword from '@utils/encrypt';
+import BadRequest from '@utils/errors/BadRequest';
+import NotFoundError from '@utils/errors/NotFoundError';
 import { v4 as uuidv4 } from 'uuid';
 import { UserSchema, UserUpdateSchema } from '@validations/user.schema';
-import { User, UserBase } from 'types';
+import type { User, UserBase, UserLogin } from 'types';
 
 const userModel: UserModel = new UserModel();
 
@@ -19,6 +21,8 @@ const userModel: UserModel = new UserModel();
  */
 
 export default class UserService {
+    
+
     public async getAllUsers(): Promise<User[]> {
         /**
          * Retrieves all users from the database.
@@ -58,6 +62,34 @@ export default class UserService {
         }
     }
 
+    public async getUserByEmail(email: string): Promise<UserLogin> {
+        /**
+         * Retrieves a user from the database by matching the provided email address.
+         *
+         * This method queries the `users` table using `userModel.getUserByEmail`.
+         * If no user is found, it throws a custom `NotFoundError`.
+         * Any other unexpected errors are caught and rethrown as generic `Error` instances.
+         * @param email - The email address to search for.
+         * @returns A Promise that resolves to a single `User (email and password)` object.
+         * @throws NotFoundError - If no user with the given email is found.
+         * @throws Error - For any other unexpected errors during the query.
+         **/
+        try {
+            const [user]: UserLogin[] = await userModel.getUserByEmail(email);
+
+            if (!user) {
+                throw new NotFoundError('The email address does not exist.');
+            }
+
+            return user;
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                throw new Error(error.message);
+            }
+            throw error;
+        }
+    }
+
     public async createUser(
         reqbody: z.infer<typeof UserSchema>
     ): Promise<User> {
@@ -85,6 +117,13 @@ export default class UserService {
                 created_at,
                 updated_at,
             };
+
+
+            const userExist: boolean = await userModel.hasRecord("email", email);
+
+            if(userExist) {
+                throw new BadRequest("This email is already in use.")
+            }
 
             const [newUser]: User[] = await userModel.createUser(
                 extractObjectValues(userData, [

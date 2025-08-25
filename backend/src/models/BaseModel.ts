@@ -11,6 +11,7 @@ export default class BaseModel {
         users: 'user_id',
         items: 'item_id',
         categories: 'category_id',
+        refresh_tokens: 'token_id',
         stock_history: 'history_id',
     };
 
@@ -55,6 +56,34 @@ export default class BaseModel {
          */
         BaseModel._ensureTableExist(table);
         return BaseModel._tableIdMap[table];
+    }
+
+    public async hasRecord(
+        table: TableName,
+        column: string,
+        value: string
+    ): Promise<boolean> {
+        /**
+         * Checks whether a record exists in a given table by matching a column value (case-insensitive).
+         * Uses a `LIKE` comparison with `LOWER()` to ensure case-insensitive matching.
+         * Returns `true` if at least one record matches the condition, otherwise `false`.
+         *
+         * @param table - The name of the table to query.
+         * @param column - The column to filter by.
+         * @param value - The value to match against the specified column.
+         * @returns A Promise that resolves to `true` if a matching record exists, or `false` otherwise.
+         */
+        const sqlSelect = `SELECT ${column} FROM ${table} WHERE LOWER(${column}) LIKE LOWER(?)`;
+        const [resultSelect] = await pool.query<RowDataPacket[]>(
+            sqlSelect,
+            value
+        );
+
+        if (resultSelect.length > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     public async getAll<T extends RowDataPacket>(
@@ -112,6 +141,31 @@ export default class BaseModel {
         } catch (error) {
             BaseModel.errorHandler(error);
         }
+    }
+
+    public async getByField<T extends RowDataPacket, V>(
+        table: TableName,
+        columnsArray: string[],
+        field: string,
+        value: V
+    ): Promise<T[]> {
+        /**
+         * Retrieves records from a database table where a specific field matches a given value (case-insensitive).
+         *
+         * Uses the `ILIKE` operator for pattern matching, which is typically supported in PostgreSQL.
+         *
+         * @typeParam T - The expected shape of the returned rows (must extend RowDataPacket).
+         * @typeParam V - The type of the value used for filtering.
+         * @param table - The name of the table to query.
+         * @param columnsArray - An array of column names to select.
+         * @param field - The column name to filter by.
+         * @param value - The value to match against the specified field using `ILIKE`.
+         * @returns A Promise that resolves to an array of matching records.
+         */
+        const columns: string = columnsArray.join(', ');
+        const sqlSelect = `SELECT ${columns} FROM ${table} WHERE LOWER(${field}) LIKE LOWER(?)`;
+        const [resultSelect] = await pool.query<T[]>(sqlSelect, [`%${value}%`]);
+        return resultSelect;
     }
 
     public async create<T extends RowDataPacket, V>(
@@ -224,7 +278,7 @@ export default class BaseModel {
             const sqlSelect = `SELECT COUNT(*) AS count FROM ${table} WHERE ${columnId} = ?;`;
 
             await conn.beginTransaction();
-            
+
             const [resultSelect] = await conn.query<RowDataPacket[]>(
                 sqlSelect,
                 [id]

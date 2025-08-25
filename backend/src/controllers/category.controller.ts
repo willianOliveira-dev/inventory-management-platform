@@ -4,6 +4,7 @@ import type { Request, Response } from 'express';
 import { Category, ValidateRequest } from 'types';
 
 const categoryService = new CategoryService();
+
 /**
  * Controller class responsible for handling HTTP requests related to categories.
  * Delegates business logic to CategoryService and formats HTTP responses.

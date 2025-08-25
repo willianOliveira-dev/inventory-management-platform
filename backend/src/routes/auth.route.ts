@@ -1,0 +1,15 @@
+import AuthController from '@controllers/auth.controller';
+import zodAsyncValidation from 'middlewares/zodAsyncValidation';
+import AuthSchema from '@validations/auth.schema';
+import { Router } from 'express';
+import { UserSchema } from '@validations/user.schema';
+
+const authController: AuthController = new AuthController();
+const router: Router = Router();
+
+router.post('/login', zodAsyncValidation(AuthSchema), authController.login);
+router.post('/register',zodAsyncValidation(UserSchema), authController.register);
+router.post('/refresh',zodAsyncValidation(AuthSchema), authController.refresh);
+router.post('/logout', authController.logout);
+
+export default router;

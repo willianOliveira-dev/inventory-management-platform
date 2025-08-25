@@ -7,6 +7,15 @@ const baseModel = new BaseModel();
  * UserModel provides CRUD operations for the 'users' table using BaseModel.
  */
 export default class UserModel {
+    public async hasRecord(column: string, value: string): Promise<boolean> {
+        /**
+         * Asynchronously checks if a record exists in the 'users' table for a given column and value.
+         * @param column - The column to search in.
+         * @param value - The value to match.
+         * @returns A Promise that resolves to true if a matching record exists, or false otherwise.
+         */
+        return await baseModel.hasRecord('users', column, value);
+    }
 
     public async getAllUsers(): Promise<User[]> {
         /**
@@ -32,6 +41,22 @@ export default class UserModel {
             'users',
             ['user_id', 'name', 'email', 'created_at', 'updated_at'],
             userId
+        );
+    }
+
+    public async getUserByEmail(email: string): Promise<User[]> {
+        /**
+         * Retrieves user(s) from the database by matching the email address.
+         *
+         * @param email - The email address to search for.
+         * @returns A Promise resolving to an array of User objects with matching email.
+         */
+
+        return await baseModel.getByField<User, string>(
+            'users',
+            ['user_id', 'email', 'password'],
+            'email',
+            email
         );
     }
 
@@ -103,6 +128,4 @@ export default class UserModel {
          */
         await baseModel.delete<User>('users', userId);
     }
-
-  
 }

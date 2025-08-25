@@ -1,9 +1,9 @@
-export default class NotFoundError extends Error {
-    private _status: number = 404;
-    
+export default class Unauthorized extends Error {
+    private _status: number = 401;
+
     constructor(public message: string) {
         super(message);
-        this.name = 'NOT_FOUND';
+        this.name = 'AUTHENTICATION_FAILED';
         Error.captureStackTrace(this, this.constructor);
     }
 
@@ -12,8 +12,8 @@ export default class NotFoundError extends Error {
     }
 
     set status(status: number) {
-        if (status !== 404) {
-            throw new Error('Unable to change 404 status.');
+        if (status !== 401) {
+            throw new Error('Unable to change 401 status.');
         }
     }
 }
