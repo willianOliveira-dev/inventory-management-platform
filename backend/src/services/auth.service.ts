@@ -102,7 +102,7 @@ export default class AuthService {
 
         const token_id: string = uuidv4();
 
-        // Explicação: ao gerar o refresh, incluímos tokenId no payload. Assim, ao receber o refresh token, o backend decodifica e já sabe qual registro do DB checar (evita busca ineficiente por usuário).
+        // Explanation: When generating the refresh token, we include the tokenId in the payload. This way, upon receiving the refresh token, the backend decodes it and already knows which DB record to check (avoiding inefficient user searches).
         const payloadRefresh: PayloadRefresh = {
             ...payload,
             token_id,
@@ -112,7 +112,7 @@ export default class AuthService {
         const expires_at: Date = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
         try {
-            // salva hash do refresh token no banco
+            // save refresh token hash in the bank
             await refreshTokenService.save(
                 token_id,
                 user.user_id,
@@ -123,7 +123,6 @@ export default class AuthService {
             handleServiceError(error, 'Login attempt unsuccessful');
         }
 
-        // retorne os tokens. Recomendado: enviar refreshToken como cookie httpOnly.
         return { accessToken, refreshToken };
     }
 
@@ -154,13 +153,20 @@ export default class AuthService {
     public async refresh(refreshTokenRaw: string): Promise<AuthTokens> {
         /**
          * Refreshes the access token using a valid refresh token.
-         * Validates token, checks DB record, revokes reused or invalid tokens,
-         * and issues new access and refresh tokens.
+         * Validates the token, checks its existence in the database, verifies integrity,
+         * revokes reused or invalid tokens, and issues new access and refresh tokens.
          *
-         * @param refreshTokenRaw - Raw refresh token from client.
-         * @returns Object containing new accessToken and refreshToken.
-         * @throws UnauthorizedError if token is invalid, revoked, or reused.
+         * @param refreshTokenRaw - Raw refresh token received from the client.
+         * @returns A Promise that resolves to an object containing the new accessToken and refreshToken.
+         * @throws UnauthorizedError if the token is missing, invalid, revoked, reused, or does not match the stored hash.
          */
+
+        if (!refreshTokenRaw) {
+            throw new UnauthorizedError(
+                'No refresh token',
+                AuthResponseCode.TOKEN_MISSING
+            );
+        }
 
         let payload;
 
@@ -170,12 +176,10 @@ export default class AuthService {
                 process.env.JWT_REFRESH_SECRET!
             );
         } catch (error: unknown) {
-
             throw new UnauthorizedError(
                 'Invalid refresh token',
                 AuthResponseCode.AUTH_INVALID_REFRESH_TOKEN
             );
-            
         }
 
         const { token_id, user_id, email } = payload as PayloadRefresh;

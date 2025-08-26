@@ -149,7 +149,7 @@ export default class AuthController {
          * @param res - Express response used to set cookies and return the new access token.
          * @returns HTTP 200 with a new access token.
          */
-        const refreshTokenRaw: string = req.body.refreshToken;
+        const refreshTokenRaw: string = req.cookies.refreshToken;
 
         const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
             await authService.refresh(refreshTokenRaw);
