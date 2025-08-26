@@ -10,14 +10,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/willianOliveira-dev/dashboard.git"
+        "url": "git+https://github.com/willianOliveira-dev/inventory-management-platform.git"
     },
     "author": "Willian Oliveira",
     "license": "Proprietary",
     "bugs": {
-        "url": "https://github.com/willianOliveira-dev/dashboard/issues"
+        "url": "https://github.com/willianOliveira-dev/inventory-management-platform.git/issues"
     },
-    "homepage": "https://github.com/willianOliveira-dev/dashboard#readme",
+    "homepage": "https://github.com/willianOliveira-dev/inventory-management-platform.git#readme",
     "devDependencies": {
         "@types/cookie-parser": "^1.4.9",
         "@types/cors": "^2.8.19",
