@@ -1,5 +1,6 @@
 import BaseModel from '@models/BaseModel';
 import pool from '@config/connect';
+import handleServiceError from '@utils/handleServiceError';
 import { Category } from 'types';
 import { RowDataPacket } from 'mysql2';
 
@@ -11,29 +12,32 @@ const baseModel = new BaseModel();
 export default class CategoryModel {
     public static async categoryExistsByName({
         name,
-    }: {
-        name: string;
-    }): Promise<boolean> {
-        /** Check if the category name exists in the database
-         * @param name The name of the category to check.
-         * @returns A Promise that resolves to `true` if the category exists, and `false` otherwise.
-         * @throws Throws an error if the database query fails.
+        user_id,
+    }: Pick<Category, 'name' | 'user_id'>): Promise<boolean> {
+        /**
+         * Checks whether a category with the given name already exists for the specified user.
+         * Executes a SQL query to count matching records in the `categories` table.
+         *
+         * @param name - The name of the category to check.
+         * @param user_id - The ID of the user who owns the category.
+         * @returns A Promise that resolves to `true` if the category exists, or `false` otherwise.
+         * @throws Error if the database query fails.
          */
+
         try {
-            const sql = `SELECT COUNT(*) AS count FROM categories WHERE name = ?`;
+            const sql = `SELECT COUNT(*) AS count FROM categories WHERE name = ? AND user_id = ?;`;
             const [resultQuery] = await pool.query<RowDataPacket[]>(sql, [
                 name,
+                user_id,
             ]);
+
             const count: number = resultQuery[0].count;
 
             return count > 0;
         } catch (error: unknown) {
-            const errorMessage: string =
-                error instanceof Error
-                    ? error.message
-                    : 'Unknown error occurred';
-            throw new Error(
-                `Error checking for duplicate category name: ${errorMessage}`
+            handleServiceError(
+                error,
+                'Error checking for duplicate category name'
             );
         }
     }
@@ -73,6 +77,7 @@ export default class CategoryModel {
          */
         return await baseModel.getAll<Category>('categories', [
             'category_id',
+            'user_id',
             'name',
             'created_at',
             'updated_at',
@@ -87,8 +92,26 @@ export default class CategoryModel {
          */
         return await baseModel.getById<Category>(
             'categories',
-            ['category_id', 'name', 'created_at', 'updated_at'],
+            ['category_id', 'user_id', 'name', 'created_at', 'updated_at'],
             categoryId
+        );
+    }
+
+    public async getCategoriesByUserId(userId: string): Promise<Category[]> {
+        /**
+         * Retrieves all categories associated with a specific user.
+         * Queries the `categories` table using the provided `user_id` and returns matching records.
+         *
+         * @param userId - The ID of the user whose items should be fetched.
+         * @returns A Promise that resolves to an array of `Category` objects belonging to the user.
+         * @throws Error if the database query fails.
+         */
+        
+        return await baseModel.getByField<Category, string>(
+            'categories',
+            ['category_id', 'user_id', 'name', 'created_at', 'updated_at'],
+            'user_id',
+            userId
         );
     }
 
@@ -102,7 +125,7 @@ export default class CategoryModel {
          */
         return await baseModel.create<Category, V>(
             'categories',
-            ['category_id', 'name', 'created_at', 'updated_at'],
+            ['category_id', 'user_id', 'name', 'created_at', 'updated_at'],
             categoryValuesArray
         );
     }

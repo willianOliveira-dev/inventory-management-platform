@@ -9,6 +9,7 @@ const itemController = new ItemController();
 
 router.get('/', authMiddleware, itemController.getAllItems);
 router.get('/:id', authMiddleware, itemController.getItemById);
+router.get('/user/my-items', authMiddleware,itemController.getItemsByUserId);
 router.post('/',authMiddleware, zodAsyncValidation(ItemSchema), itemController.createItem);
 router.patch('/:id', authMiddleware,zodAsyncValidation(ItemUpdateSchema), itemController.updateItem);
 router.delete('/:id', authMiddleware,itemController.deleteItem);

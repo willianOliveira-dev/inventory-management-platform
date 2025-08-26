@@ -4,10 +4,14 @@ import extractObjectValues from '@utils/extractObjectValues';
 import toCapitalize from '@utils/toCapitalize';
 import CategorySchema from '@validations/category.schema';
 import handleServiceError from '@utils/handleServiceError';
+import NotFoundError from '@errors/http/NotFoundError';
+import ForbiddenError from '@errors/http/ForbiddenError';
+import UserService from './user.service';
 import updateData from '@utils/updateData';
 import { v4 as uuidv4 } from 'uuid';
 import { Category, CategoryBase } from 'types';
 import ValidationError from '@errors/http/ValidationError';
+import { CategoryResponseCode } from 'constants/responsesCode/category';
 
 const categoryModel: CategoryModel = new CategoryModel();
 
@@ -40,43 +44,83 @@ export default class CategoryService {
          * Asynchronously retrieves a category by its ID.
          * @param categoryId The ID of the category to retrieve.
          * @returns A Promise that resolves to a single Category object.
-         * @throws Throws an error if the category is not found or the query fails.
+         * @throws NotFoundError if no category is found with the given ID.
+         * @throws Throws an error if the query fails.
          */
+
         try {
-            const [category]: Category[] = await categoryModel.getCategoryById(
+            const category: Category[] = await categoryModel.getCategoryById(
                 categoryId
             );
-            return category;
+
+            if (category.length === 0) {
+                throw new NotFoundError(
+                    'No records matching the category were found.',
+                    CategoryResponseCode.CATEGORY_NOT_FOUND
+                );
+            }
+
+            return category[0];
         } catch (error: unknown) {
             handleServiceError(error, 'Failed to search for category by id');
         }
     }
 
-    public async createCategory({
-        name,
-    }: z.infer<typeof CategorySchema>): Promise<Category> {
+    public async getCategoriesByUserId(userId: string): Promise<Category[]> {
         /**
-         * Asynchronously creates a new category after validating uniqueness and formatting.
-         * @param name The name of the category to create.
-         * @returns A Promise that resolves to the newly created Category object.
-         * @throws Throws an error if the category already exists or creation fails.
+         * Asynchronously retrieves all categories associated with a user ID.
+         * @param userId The ID of the user whose categories are to be retrieved.
+         * @returns A Promise that resolves to an array of Category objects.
+         * @throws NotFoundError if the user does not exist.
+         * @throws Throws an error if the query fails.
          */
+
+        try {
+            const { user_id } = await new UserService().getUserById(userId);
+            const categories: Category[] =
+                await categoryModel.getCategoriesByUserId(user_id);
+            return categories;
+        } catch (error) {
+            handleServiceError(error, 'Failed to search for category by user_id');
+        }
+    }
+
+    public async createCategory(
+        { name }: z.infer<typeof CategorySchema>,
+        user_id: string
+    ): Promise<Category> {
+        /**
+         * Creates a new category for the specified user after validating uniqueness and formatting.
+         * Capitalizes the category name, checks for duplicates, and inserts the new record into the database.
+         *
+         * @param name - The name of the category to be created (validated via `CategorySchema`).
+         * @param user_id - The ID of the user creating the category.
+         * @returns A Promise that resolves to the newly created `Category` object.
+         * @throws `ValidationError` if a category with the same name already exists.
+         * @throws Throws an error if the category is not found or the query fails.
+         */
+
         try {
             const category_id: string = uuidv4();
             const created_at: Date = new Date();
             const updated_at: Date = new Date();
             name = toCapitalize(name);
 
-            const exists = await CategoryModel.categoryExistsByName({ name });
+            const exists = await CategoryModel.categoryExistsByName({
+                name,
+                user_id,
+            });
 
             if (exists) {
                 throw new ValidationError(
-                    `The category "${name}" already exists. The creation has been canceled.`
+                    `The category "${name}" already exists. The creation has been canceled.`,
+                    CategoryResponseCode.CATEGORY_ALREADY_EXISTS
                 );
             }
 
             const categoryData = {
                 category_id,
+                user_id,
                 name,
                 created_at,
                 updated_at,
@@ -86,6 +130,7 @@ export default class CategoryService {
                 await categoryModel.createCategory(
                     extractObjectValues(categoryData, [
                         'category_id',
+                        'user_id',
                         'name',
                         'created_at',
                         'updated_at',
@@ -136,7 +181,7 @@ export default class CategoryService {
         }
     }
 
-    public async deleteCategory(categoryId: string) {
+    public async deleteCategory(categoryId: string, user_id: string) {
         /**
          * Asynchronously deletes a category by its ID.
          * @param categoryId The ID of the category to delete.
@@ -144,6 +189,14 @@ export default class CategoryService {
          * @throws Throws an error if the deletion fails.
          */
         try {
+            const category: Category = await this.getCategoryById(categoryId);
+
+            if (category.user_id !== user_id) {
+                throw new ForbiddenError(
+                    "You don't have permission to delete this item",
+                    CategoryResponseCode.CATEGORY_FORBIDDEN
+                );
+            }
             await categoryModel.deleteCategory(categoryId);
         } catch (error: unknown) {
             handleServiceError(error, 'Failed to delete category by id');

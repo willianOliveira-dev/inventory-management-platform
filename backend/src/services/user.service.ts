@@ -40,16 +40,26 @@ export default class UserService {
 
     public async getUserById(userId: string): Promise<User> {
         /**
-         * Retrieves a single user by their ID.
+         * Retrieves a user by their unique ID.
+         * Queries the database and returns the first matching user record.
+         * Throws a `NotFoundError` if no user is found.
          *
          * @param userId - The ID of the user to retrieve.
-         * @returns A Promise that resolves to the User object.
-         * @throws Error if the user is not found or the query fails.
+         * @returns A Promise that resolves to the `User` object.
+         * @throws NotFoundError if no user is found with the given ID.
+         * @throws Error if the query fails or an unexpected issue occurs.
          */
-        try {
-            const [user]: User[] = await userModel.getUserById(userId);
 
-            return user;
+        try {
+            const user: User[] = await userModel.getUserById(userId);
+
+            if (user.length === 0) {
+                throw new NotFoundError(
+                    'No records matching the user were found.',
+                    UserResponseCode.USER_NOT_FOUND
+                );
+            }
+            return user[0];
         } catch (error: unknown) {
             handleServiceError(error, 'Failed to search for user by id');
         }

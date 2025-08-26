@@ -58,17 +58,25 @@ export default class CategoryController {
 
     public async createCategory(
         /**
-         * Handles POST request to create a new category.
+         * Handles HTTP POST request to create a new category.
+         * Accepts validated input based on `CategorySchema` and associates the category with the authenticated user.
          *
-         * @param req - Express Request object with validated body (CategorySchema).
-         * @param res - Express Response object.
-         * @returns HTTP 201 with the newly created Category object.
+         * @param req - Express Request object containing the validated category data in `body` and authenticated user in `req.user`.
+         * @param res - Express Response object used to return the result.
+         * @returns HTTP 201 with a standardized success response containing the newly created Category object.
+         * @throws ValidationError if the input data is invalid.
+         * @throws Error if the creation process fails.
          */
+
         req: ValidateRequest<typeof CategorySchema>,
         res: Response
     ) {
+        const { user } = req;
+        const { name } = req.body;
+
         const category: Category = await categoryService.createCategory(
-            req.body
+            { name },
+            user?.user_id!
         );
 
         const response = createResponse<Category>(
@@ -80,6 +88,28 @@ export default class CategoryController {
         );
 
         return res.status(201).send(response);
+    }
+
+    public async getCategoriesByUser(req: Request, res: Response) {
+        /**
+         * Handles GET request to retrieve all categories associated with the authenticated user.
+         *
+         * @param req - Express Request object containing the authenticated user.
+         * @param res - Express Response object.
+         * @returns HTTP 200 with an array of Category objects belonging to the user.
+         */
+
+        const { user } = req;
+        const categories: Category[] =
+            await categoryService.getCategoriesByUserId(user?.user_id!);
+        const response = createResponse(
+            'success',
+            CategoryResponseCode.CATEGORY_FETCH_SUCCESS,
+            200,
+            `Successfully fetched categories for user_id: ${user?.user_id}`,
+            categories
+        );
+        res.status(200).send(response);
     }
 
     public async updateCategory(
@@ -112,14 +142,20 @@ export default class CategoryController {
 
     public async deleteCategory(req: Request, res: Response) {
         /**
-         * Handles DELETE request to remove a category by its ID.
+         * Handles HTTP DELETE request to remove a category by its unique ID.
+         * Validates user ownership before deletion and returns a standardized response.
          *
-         * @param req - Express Request object containing category ID in params.
-         * @param res - Express Response object.
-         * @returns HTTP 204 with no content.
+         * @param req - Express Request object containing the category ID in `params` and authenticated user in `req.user`.
+         * @param res - Express Response object used to send the result.
+         * @returns HTTP 200 with a success message if deletion is successful.
+         * @throws ForbiddenError if the user does not own the category.
+         * @throws Error if the deletion process fails.
          */
+
+        const { user } = req;
         const { id } = req.params;
-        await categoryService.deleteCategory(id);
+
+        await categoryService.deleteCategory(id, user?.user_id!);
 
         const response = createResponse<Category>(
             'success',

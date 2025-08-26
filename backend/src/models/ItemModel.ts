@@ -48,6 +48,33 @@ export default class ItemModel {
         );
     }
 
+    public async getItemByUserId(userId: string): Promise<Item[]> {
+        /**
+         * Retrieves all items associated with a specific user.
+         * Queries the `items` table using the provided `user_id` and returns matching records.
+         *
+         * @param userId - The ID of the user whose items should be fetched.
+         * @returns A Promise that resolves to an array of `Item` objects belonging to the user.
+         * @throws Error if the database query fails.
+         */
+        return await baseModel.getByField<Item, string>(
+            'items',
+            [
+                'item_id',
+                'user_id',
+                'category_id',
+                'name',
+                'price_cents',
+                'description',
+                'current_quantity',
+                'created_at',
+                'updated_at',
+            ],
+            'user_id',
+            userId
+        );
+    }
+
     public async createItem<V>(itemValuesArray: V[]): Promise<Item[]> {
         /**
          * Asynchronously creates a new item in the 'items' table.

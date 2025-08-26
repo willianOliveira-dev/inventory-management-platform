@@ -9,6 +9,7 @@ const categoryController = new CategoryController();
 
 router.get('/', authMiddleware ,categoryController.getAllCategories);
 router.get('/:id', authMiddleware, categoryController.getCategoryById);
+router.get('/user/my-categories', authMiddleware, categoryController.getCategoriesByUser)
 router.post( '/', authMiddleware, zodAsyncValidation(CategorySchema),categoryController.createCategory);
 router.patch('/:id', authMiddleware, zodAsyncValidation(CategorySchema),categoryController.updateCategory);
 router.delete('/:id',authMiddleware, categoryController.deleteCategory);

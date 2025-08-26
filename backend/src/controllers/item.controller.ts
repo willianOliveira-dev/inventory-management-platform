@@ -55,6 +55,28 @@ export default class ItemController {
         return res.status(200).send(response);
     }
 
+    public async getItemsByUserId(req: Request, res: Response) {
+        /**
+         * Handles GET request to retrieve all items associated with the authenticated user.
+         *
+         * @param req - Express Request object containing the authenticated user.
+         * @param res - Express Response object.
+         * @returns HTTP 200 with an array of Item objects belonging to the user.
+         */
+        const { user } = req;
+        const items: Item[] = await itemService.getItemsByUserId(
+            user?.user_id!
+        );
+        const response = createResponse(
+            'success',
+            ItemResponseCode.ITEM_FETCH_SUCCESS,
+            200,
+            `Successfully fetched items for user_id: ${user?.user_id}`,
+            items
+        );
+        res.status(200).send(response);
+    }
+
     public async createItem(
         req: ValidateRequest<typeof ItemSchema>,
         res: Response
@@ -66,7 +88,11 @@ export default class ItemController {
          * @param res - Express Response object.
          * @returns HTTP 201 with the newly created Item object.
          */
-        const item: Item = await itemService.createItem(req.body);
+        const { user } = req;
+        const item: Item = await itemService.createItem(
+            req.body,
+            user?.user_id!
+        );
         const response = createResponse<Item>(
             'success',
             ItemResponseCode.ITEM_CREATED,
@@ -112,8 +138,10 @@ export default class ItemController {
          * @returns HTTP 204 with no content.
          */
         const { id } = req.params;
-        await itemService.deleteItem(id);
-        
+        const { user } = req;
+
+        await itemService.deleteItem(id, user?.user_id!);
+
         const response = createResponse<Item>(
             'success',
             ItemResponseCode.ITEM_DELETED,

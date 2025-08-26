@@ -131,12 +131,6 @@ export default class BaseModel {
             const sql = `SELECT ${columns} FROM ${table} WHERE ${columnId} = ?;`;
             const [resultSelect] = await pool.query<T[]>(sql, [id]);
 
-            if (resultSelect.length === 0) {
-                throw new NotFoundError(
-                    `Record with ID ${id} not found in table ${table}`
-                );
-            }
-
             return resultSelect;
         } catch (error) {
             BaseModel.errorHandler(error);
@@ -165,6 +159,7 @@ export default class BaseModel {
         const columns: string = columnsArray.join(', ');
         const sqlSelect = `SELECT ${columns} FROM ${table} WHERE LOWER(${field}) LIKE LOWER(?)`;
         const [resultSelect] = await pool.query<T[]>(sqlSelect, [`%${value}%`]);
+
         return resultSelect;
     }
 

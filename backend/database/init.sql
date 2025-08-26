@@ -14,10 +14,13 @@ CREATE TABLE IF NOT EXISTS users(
 
 CREATE TABLE IF NOT EXISTS categories(
 	category_id CHAR(36),
+    user_id CHAR(36) NOT NULL,
     name VARCHAR(100) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT pk_category PRIMARY KEY (category_id)
+    CONSTRAINT pk_category PRIMARY KEY (category_id),
+    CONSTRAINT fk_category_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT un_category_user UNIQUE(user_id, name)
 );
 
 CREATE TABLE IF NOT EXISTS items(

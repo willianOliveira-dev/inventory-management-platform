@@ -10,6 +10,9 @@ import NotFoundError from '@errors/http/NotFoundError';
 import { v4 as uuidv4 } from 'uuid';
 import { ItemSchema, ItemUpdateSchema } from '@validations/item.schema';
 import { Item, ItemBase, StockHistory } from 'types';
+import ForbiddenError from '@errors/http/ForbiddenError';
+import { ItemResponseCode } from 'constants/responsesCode/item';
+import UserService from './user.service';
 
 const itemModel: ItemModel = new ItemModel();
 const stockHistoryModel: StockHistoryModel = new StockHistoryModel();
@@ -60,7 +63,10 @@ export default class ItemService {
         }
     }
 
-    private static async registerItem(reqBody: z.infer<typeof ItemSchema>) {
+    private static async registerItem(
+        reqBody: z.infer<typeof ItemSchema>,
+        userId: string
+    ) {
         /**
          * Prepares and validates item data before creation.
          * Ensures the category exists and formats the item name.
@@ -70,7 +76,7 @@ export default class ItemService {
          * @throws NotFoundError if the category does not exist.
          */
         const item_id: string = uuidv4();
-        const user_id: string = '791dd1e7-a29e-462e-8769-b119229e4596'; // ! ALTERAR PARA O REGISTRO DO USUÁRIO LOGADO - Payload
+        const user_id: string = userId;
         const created_at: Date = new Date();
         const updated_at: Date = new Date();
 
@@ -121,37 +127,73 @@ export default class ItemService {
 
     public async getItemById(itemId: string): Promise<Item> {
         /**
-         * Retrieves a single item by its ID.
+         * Retrieves a single item by its unique ID.
+         * Queries the database and returns the first matching item record.
+         * Throws a `NotFoundError` if no item is found.
          *
          * @param itemId - The ID of the item to retrieve.
-         * @returns A Promise that resolves to the Item object.
-         * @throws Error if the item is not found or the query fails.
+         * @returns A Promise that resolves to the `Item` object.
+         * @throws NotFoundError if no item is found with the given ID.
+         * @throws Error if the query fails or an unexpected issue occurs.
          */
+
         try {
-            const [item]: Item[] = await itemModel.getItemById(itemId);
-            return item;
+            const item: Item[] = await itemModel.getItemById(itemId);
+
+            if (item.length === 0) {
+                throw new NotFoundError(
+                    'No records matching the item were found.',
+                    ItemResponseCode.ITEM_NOT_FOUND
+                );
+            }
+
+            return item[0];
         } catch (error: unknown) {
             handleServiceError(error, 'Failed to search for item by id');
         }
     }
 
+    public async getItemsByUserId(userId: string): Promise<Item[]> {
+        /**
+         * Retrieves all items associated with a specific user ID.
+         * First verifies the existence of the user, then fetches their items.
+         *
+         * @param userId - The ID of the user whose items are to be retrieved.
+         * @returns A Promise that resolves to an array of `Item` objects.
+         * @throws NotFoundError if the user does not exist.
+         * @throws Error if the item query fails or another unexpected issue occurs.
+         */
+
+        try {
+            const { user_id } = await new UserService().getUserById(userId);
+            const items: Item[] = await itemModel.getItemByUserId(user_id);
+            return items;
+        } catch (error) {
+            handleServiceError(error, 'Failed to search for item by user_id');
+        }
+    }
+
     public async createItem(
-        reqBody: z.infer<typeof ItemSchema>
+        reqBody: z.infer<typeof ItemSchema>,
+        userId: string
     ): Promise<Item> {
         /**
-         * Creates a new item after validating and formatting the input.
+         * Creates a new item and registers its initial stock history.
          *
          * This method performs the following steps:
-         * 1. Validates and registers the item using `ItemService.registerItem`.
+         * 1. Validates and formats the input using `ItemService.registerItem`.
          * 2. Persists the item in the database via `itemModel.createItem`.
-         * 3. Automatically creates a stock history record with initial values.
+         * 3. Creates a stock history record with initial quantity and price.
          *
-         * @param reqBody - The request body containing item data, validated against `ItemSchema`.
-         * @returns A Promise that resolves to the newly created `Item` object.
-         * @throws Error if the category is invalid, the item creation fails, or any unexpected issue occurs.
+         * @param reqBody - Validated item data from the request body.
+         * @param userId - ID of the user creating the item.
+         * @returns The newly created `Item` object.
+         * @throws ValidationError if the category is invalid.
+         * @throws Error if item creation or stock history registration fails.
          */
+
         try {
-            const itemData = await ItemService.registerItem(reqBody);
+            const itemData = await ItemService.registerItem(reqBody, userId);
             const {
                 item_id,
                 user_id,
@@ -265,15 +307,29 @@ export default class ItemService {
         }
     }
 
-    public async deleteItem(itemId: string): Promise<void> {
+    public async deleteItem(itemId: string, userId: string): Promise<void> {
         /**
-         * Deletes an item by its ID.
+         * Deletes an item by its unique identifier.
+         * Validates ownership before proceeding with deletion.
+         * Handles errors gracefully and logs failure context.
          *
-         * @param itemId - The ID of the item to delete.
+         * @param itemId - The unique ID of the item to be deleted.
+         * @param userId - The ID of the user attempting the deletion.
          * @returns A Promise that resolves when the item is successfully deleted.
-         * @throws Error if the deletion fails.
+         * @throws ForbiddenError if the user does not own the item.
+         * @throws handleServiceError if the deletion process fails.
          */
+
         try {
+            const item: Item = await this.getItemById(itemId);
+
+            if (item.user_id !== userId) {
+                throw new ForbiddenError(
+                    "You don't have permission to delete this item",
+                    ItemResponseCode.ITEM_FORBIDDEN
+                );
+            }
+
             await itemModel.deleteItem(itemId);
         } catch (error: unknown) {
             handleServiceError(error, 'Failed to delete item by id');
