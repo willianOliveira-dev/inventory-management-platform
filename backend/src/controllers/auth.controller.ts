@@ -61,7 +61,7 @@ export default class AuthController {
 
         const { name, email, password } = req.body;
 
-        const user: User = await authService.register(name, email, password);
+        const { user_id }: User = await authService.register(name, email, password);
 
         const { accessToken, refreshToken } = await authService.login(
             email,
@@ -78,8 +78,8 @@ export default class AuthController {
 
         const data = {
             user: {
-                id: user.user_id,
-                email: user.email,
+                user_id,
+                email,
             },
             accessToken,
         };
