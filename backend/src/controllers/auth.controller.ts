@@ -4,14 +4,15 @@ import createResponse from '@utils/createResponse';
 import AuthSchema from '@validations/auth.schema';
 import { AuthResponseCode } from 'constants/responsesCode/auth';
 import { UserSchema } from '@validations/user.schema';
+import { UserResponseCode } from 'constants/responsesCode/user';
+import type { AuthTokens, Payload, User, ValidateRequest } from 'types';
 import type { Request, Response } from 'express';
-import type { AuthTokens, User, ValidateRequest } from 'types';
 
 const authService: AuthService = new AuthService();
 
 /**
  * Controller responsible for handling authentication-related HTTP requests.
- * Includes user registration, login, logout, and token refresh operations.
+ * Includes user registration, login, logout, getMe and token refresh operations.
  */
 
 export default class AuthController {
@@ -61,7 +62,11 @@ export default class AuthController {
 
         const { name, email, password } = req.body;
 
-        const { user_id }: User = await authService.register(name, email, password);
+        const { user_id }: User = await authService.register(
+            name,
+            email,
+            password
+        );
 
         const { accessToken, refreshToken } = await authService.login(
             email,
@@ -138,6 +143,28 @@ export default class AuthController {
         );
 
         return res.json(response);
+    }
+
+    public async getMe(req: Request, res: Response) {
+        /**
+         * Returns the current user's data based on the JWT token
+         *
+         * @param req - Request containing the user authenticated in the middleware
+         * @param res - Response with user data
+         * @returns HTTP 200 with user data
+         */
+        const { user_id } = req.user as Payload;
+        const user: User = await new UserService().getUserById(user_id);
+
+        res.status(200).json(
+            createResponse(
+                'success',
+                UserResponseCode.USER_FETCH_SUCCESS,
+                200,
+                'User data retrieved successfully',
+                user
+            )
+        );
     }
 
     public async refresh(req: Request<{}, {}, AuthTokens>, res: Response) {
