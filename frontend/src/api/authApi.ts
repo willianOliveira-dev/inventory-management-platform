@@ -2,7 +2,7 @@ import type { LoginData, RegisterData, AuthResponse } from '../types';
 import TokenStorage from '../utils/TokenStorage';
 import api from './api';
 
-export const authApi = {
+const authApi = {
     async login(data: LoginData): Promise<AuthResponse> {
         const { data: response } = await api.post<AuthResponse>('/panel/v1/auth/login', data );
         return response;
@@ -23,3 +23,5 @@ export const authApi = {
         return response;
     }
 };
+
+export default authApi;
