@@ -1,5 +1,5 @@
 import BaseModel from '@models/BaseModel';
-import { Item } from 'types';
+import { type Item } from 'types';
 
 const baseModel: BaseModel = new BaseModel();
 

@@ -1,8 +1,8 @@
 import BaseModel from '@models/BaseModel';
 import pool from '@config/connect';
 import handleServiceError from '@utils/handleServiceError';
-import { Category } from 'types';
 import { RowDataPacket } from 'mysql2';
+import { type Category } from 'types';
 
 const baseModel = new BaseModel();
 
@@ -106,7 +106,7 @@ export default class CategoryModel {
          * @returns A Promise that resolves to an array of `Category` objects belonging to the user.
          * @throws Error if the database query fails.
          */
-        
+
         return await baseModel.getByField<Category, string>(
             'categories',
             ['category_id', 'user_id', 'name', 'created_at', 'updated_at'],

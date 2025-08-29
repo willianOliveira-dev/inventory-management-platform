@@ -6,7 +6,6 @@ import UnauthorizedError from '@errors/http/ UnauthorizedError';
 import handleServiceError from '@utils/handleServiceError';
 import { v4 as uuidv4 } from 'uuid';
 import type {
-    UserLogin,
     Payload,
     PayloadRefresh,
     RefreshToken,
@@ -79,7 +78,7 @@ export default class AuthService {
          * @throws UnauthorizedError if password is invalid.
          */
 
-        const user: UserLogin = await new UserService().getUserByEmail(email);
+        const user: User = await new UserService().getUserByEmail(email);
 
         const isValidPassword: boolean = await bcrypt.compare(
             password,

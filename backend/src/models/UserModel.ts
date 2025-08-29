@@ -1,5 +1,5 @@
 import BaseModel from '@models/BaseModel';
-import { User } from 'types';
+import { type User } from 'types';
 
 const baseModel = new BaseModel();
 
@@ -34,8 +34,13 @@ export default class UserModel {
     public async getUserById(userId: string): Promise<User[]> {
         /**
          * Asynchronously retrieves a user by their ID from the 'users' table.
+         *
+         * Unlike `getUserByEmail`, this method does **not** include the user's password
+         * in the result, as it's typically used for profile retrieval rather than authentication.
+         *
          * @param userId The ID of the user to retrieve.
          * @returns A Promise that resolves to an array containing the matching User.
+         * @throws Throws an error if the query fails.
          */
         return await baseModel.getById<User>(
             'users',
@@ -46,15 +51,26 @@ export default class UserModel {
 
     public async getUserByEmail(email: string): Promise<User[]> {
         /**
-         * Retrieves user(s) from the database by matching the email address.
+         * Asynchronously retrieves user(s) from the database by matching the email address.
          *
-         * @param email - The email address to search for.
+         * Unlike `getUserById`, this method includes the user's password in the result,
+         * which is necessary for validating credentials during login.
+         *
+         * @param email The email address to search for.
          * @returns A Promise resolving to an array of User objects with matching email.
+         * @throws Throws an error if the query fails.
          */
 
         return await baseModel.getByField<User, string>(
             'users',
-            ['user_id', 'email', 'password'],
+            [
+                'user_id',
+                'name',
+                'email',
+                'password',
+                'created_at',
+                'updated_at',
+            ],
             'email',
             email
         );

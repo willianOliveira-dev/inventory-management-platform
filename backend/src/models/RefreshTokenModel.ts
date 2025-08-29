@@ -1,5 +1,5 @@
 import BaseModel from '@models/BaseModel';
-import type { RefreshToken } from 'types';
+import  { type RefreshToken } from 'types';
 
 /**
  * RefreshTokenModel provides CRUD operations for the 'refresh_tokens' table using BaseModel.

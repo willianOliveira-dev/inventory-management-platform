@@ -9,8 +9,8 @@ import NotFoundError from 'errors/http/NotFoundError';
 import handleServiceError from '@utils/handleServiceError';
 import { v4 as uuidv4 } from 'uuid';
 import { UserSchema, UserUpdateSchema } from '@validations/user.schema';
-import type { User, UserBase, UserLogin } from 'types';
 import { UserResponseCode } from 'constants/responsesCode/user';
+import type { User, UserBase } from 'types';
 
 const userModel: UserModel = new UserModel();
 
@@ -65,7 +65,7 @@ export default class UserService {
         }
     }
 
-    public async getUserByEmail(email: string): Promise<UserLogin> {
+    public async getUserByEmail(email: string): Promise<User> {
         /**
          * Retrieves a user from the database by matching the provided email address.
          *
@@ -78,7 +78,7 @@ export default class UserService {
          * @throws Error - For any other unexpected errors during the query.
          **/
         try {
-            const [user]: UserLogin[] = await userModel.getUserByEmail(email);
+            const [user]: User[] = await userModel.getUserByEmail(email);
 
             if (!user) {
                 throw new NotFoundError(
