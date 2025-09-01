@@ -1,12 +1,17 @@
 import api from '../api/api';
-import authApi  from '../api/authApi';
+import authApi from '../api/authApi';
 import TokenStorage from '../utils/TokenStorage';
 import AuthContext from '../context/authContext';
 import { useEffect, useState } from 'react';
-import type { User, LoginData, RegisterData, AuthContextType, AuthProviderProps } from '../types';
+import type {
+    User,
+    LoginData,
+    RegisterData,
+    AuthContextType,
+    AuthProviderProps,
+} from '../types';
 
-export default function AuthProvider ({ children }: AuthProviderProps) {
-    
+export default function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -78,6 +83,7 @@ export default function AuthProvider ({ children }: AuthProviderProps) {
         isLoading,
     };
 
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
-
+    return (
+        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    );
+}
