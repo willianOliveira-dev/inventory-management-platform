@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import LoadingSpinner from '../components/LoadingSpinner';
 import backgroundLogin from '../assets/backgroundLogin.webp';
+import Logo from '../assets/logo.png';
 
 export default function Login() {
     const [email, setEmail] = useState<string>('');
@@ -43,11 +44,18 @@ export default function Login() {
     };
 
     return (
-        <div className="relative flex min-h-screen items-center justify-center bg-stone-950 p-4">
-            <div className="flex w-full max-w-4xl rounded-2xl shadow-[0_0_20px_0_rgba(0,0,0,0.7)] text-white overflow-hidden">
+        <div className="relative flex min-h-screen items-center justify-center bg-stone-950 p-4 ">
+            <div className="flex w-full max-w-4xl rounded-2xl shadow-[0_0_30px_0_rgba(116,28,233,0.25)] text-white overflow-hidden">
                 <div className="flex flex-col w-full md:w-1/2 justify-center items-center gap-6 p-8">
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-violet-600 bg-clip-text text-transparent">
-                        Sign In
+                    <h2 className="flex justify-items items-center gap-2 text-3xl font-bold bg-gradient-to-r from-violet-500 via-cyan-600 to-violet-700 bg-clip-text text-transparent">
+                        Sign In{' '}
+                        <span className="block w-10 h-10 animate-pulse">
+                            <img
+                                className="size-full object-fit"
+                                src={Logo}
+                                alt="Logo"
+                            />
+                        </span>
                     </h2>
                     <form
                         className="space-y-4 w-full flex flex-col"
