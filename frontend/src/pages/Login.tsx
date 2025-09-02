@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import LoadingSpinner from '../components/LoadingSpinner';
 import backgroundLogin from '../assets/backgroundLogin.webp';
 import Logo from '../assets/logo.png';
+import Typewriter from '../components/typewriter/Typewriter';
 
 export default function Login() {
     const [email, setEmail] = useState<string>('');
@@ -214,7 +215,7 @@ export default function Login() {
                         loading="lazy"
                     />
                     <div className="flex flex-col items-center p-8 gap-4 z-10 text-center">
-                        <h2 className="text-4xl font-bold">Welcome back!</h2>
+                        <h2 className="text-4xl font-bold"><Typewriter speed={80} texts={["Welcome Back!", "Back in action!" ,"Secure and fast login", "Shall we continue?"]}/></h2>
                         <p className="text-center text-gray-100">
                             Sign in to access your account and continue from
                             where you left off.
