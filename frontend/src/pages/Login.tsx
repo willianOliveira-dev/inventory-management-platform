@@ -32,7 +32,7 @@ export default function Login() {
 
         try {
             await login({ email, password });
-            navigate('/dashboard');
+            navigate('/');
         } catch (err: any) {
             setError({
                 code: err.response.data.code,
