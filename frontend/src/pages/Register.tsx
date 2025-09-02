@@ -1,43 +1,56 @@
 import LoadingSpinner from '../components/LoadingSpinner';
-import backgroundLogin from '../assets/backgroundLogin.webp';
-import Logo from '../assets/logo.png';
 import Typewriter from '../components/typewriter/Typewriter';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
-import { useState, type FormEvent } from 'react';
+import Logo from '../assets/logo.png';
+import backgroundLogin from '../assets/backgroundLogin.webp';
+import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaCheck } from 'react-icons/fa';
+import { MdError } from 'react-icons/md';
+import { type FormEvent } from 'react';
 
-export default function Login() {
+export default function Register() {
+    const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [error, setError] = useState<{ code: string; message: string }>({
+    const [error, setError] = useState<{
+        code: string;
+        message: { field: string; message: string; code: string }[] | string;
+    }>({
         code: '',
         message: '',
     });
-    const [loading, setLoading] = useState<boolean>(false);
-    const [showPassword, setShowPassword] = useState<boolean>(false);
     const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
-    const { login } = useAuth();
+    const validations = {
+        hasUppercase: /[A-Z]/.test(password),
+        hasLowercase: /[a-z]/.test(password),
+        hasNumber: /[0-9]/.test(password),
+        hasSpecialChar: /[!@#$%^&*]/.test(password),
+        hasMinLength: password.length >= 8,
+    };
+
+    const { register } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setIsSubmitted(true);
 
-        if (!email || !password) {
+        if (!name || !email || !password) {
             return;
         }
-
         setLoading(true);
-
         try {
-            await login({ email, password });
+            await register({ name, email, password });
             navigate('/');
         } catch (err: any) {
             setError({
                 code: err.response.data.code,
-                message: err.response.data.message,
+                message: err.response.data.message || err.response.data.details,
             });
         } finally {
             setLoading(false);
@@ -64,7 +77,7 @@ export default function Login() {
             <div className="flex w-full max-w-5xl rounded-2xl shadow-[0_0_30px_0_rgba(116,28,233,0.25)] text-white overflow-hidden z-10">
                 <div className="flex flex-col w-full md:w-1/2 justify-center items-center gap-6 p-8">
                     <h2 className="flex justify-items items-center gap-2 text-3xl font-bold bg-gradient-to-r from-violet-500 via-cyan-600 to-violet-700 bg-clip-text text-transparent">
-                        Sign In{' '}
+                        Sign Up{' '}
                         <span className="block w-10 h-10 animate-pulse">
                             <img
                                 className="size-full object-fit"
@@ -77,6 +90,48 @@ export default function Login() {
                         className="space-y-4 w-full flex flex-col"
                         onSubmit={handleSubmit}
                     >
+                        <div className="relative h-16">
+                            <input
+                                type="text"
+                                onChange={(e) => {
+                                    setError({ code: '', message: '' });
+                                    setName(e.target.value);
+                                }}
+                                value={name}
+                                id="name"
+                                className={`block px-4 pb-2.5 pt-5 w-full text-sm text-white bg-stone-900  
+                                    rounded-lg appearance-none focus:outline-none focus:ring-2 peer shadow-[0_0_15px_0_rgba(0,0,0, 90)]
+                                    ${
+                                        error.code === 'USER_NOT_FOUND'
+                                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                                            : 'border-gray-600 focus:border-violet-500 focus:ring-violet-500 '
+                                    }`}
+                                placeholder=" "
+                                required
+                            />
+                            <label
+                                htmlFor="name"
+                                className="absolute text-sm text-gray-400 duration-300 transform -translate-y-4 
+                                    scale-75 top-4 z-10 origin-[0] left-4 peer-focus:text-violet-400 
+                                    peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 
+                                    peer-focus:scale-75 peer-focus:-translate-y-4"
+                            >
+                                Name
+                            </label>
+                            {isSubmitted && !name && (
+                                <span className="text-red-400 text-xs mt-1 block">
+                                    Name is required
+                                </span>
+                            )}
+
+                            {typeof error.message !== 'string' &&
+                                error.message[0].field === 'name' && (
+                                    <span className="text-red-400 text-xs mt-1 block">
+                                        {error.message[0].message}
+                                    </span>
+                                )}
+                        </div>
+
                         <div className="relative h-16">
                             <input
                                 type="email"
@@ -103,16 +158,16 @@ export default function Login() {
                                     peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 
                                     peer-focus:scale-75 peer-focus:-translate-y-4"
                             >
-                                Email
+                                E-mail
                             </label>
-                            {error.code === 'USER_NOT_FOUND' && (
-                                <span className="text-red-400 text-xs mt-1 block">
-                                    {error.message}
-                                </span>
-                            )}
                             {isSubmitted && !email && (
                                 <span className="text-red-400 text-xs mt-1 block">
                                     Email is required
+                                </span>
+                            )}
+                            {error.code === 'USER_EMAIL_ALREADY_EXISTS' && (
+                                <span className="text-red-400 text-xs mt-1 block">
+                                    {error.message as string}
                                 </span>
                             )}
                         </div>
@@ -162,24 +217,67 @@ export default function Login() {
                                     {!showPassword ? <FaEyeSlash /> : <FaEye />}
                                 </button>
                             </div>
-                            {error.code === 'AUTH_INVALID_PASSWORD' && (
-                                <span className="text-red-400 text-xs mt-1 block">
-                                    {error.message}
-                                </span>
-                            )}
                             {isSubmitted && !password && (
                                 <span className="text-red-400 text-xs mt-1 block">
                                     Password is required
                                 </span>
                             )}
+
+                            {typeof error.message !== 'string' &&
+                                error.message[0].field === 'password' && (
+                                    <span className="text-red-400 text-xs mt-1 block">
+                                        Password invalid
+                                    </span>
+                                )}
                         </div>
 
-                        <Link
-                            className="text-gray-400 text-sm self-end hover:text-violet-400 transition-colors"
-                            to={'/forgot-password'}
-                        >
-                            Forgot password?
-                        </Link>
+                        <div className="bg-stone-900/50 p-2 rounded-sm">
+                            <h2 className="text-gray-400 text-xs">
+                                Create a strong password with at least:
+                            </h2>
+                            <div className="flex flex-col gap-0.5">
+                                <p className="flex items-center gap-2 text-gray-500 text-xs">
+                                    {validations.hasUppercase ? (
+                                        <FaCheck className="text-green-500" />
+                                    ) : (
+                                        <MdError className="text-red-500" />
+                                    )}{' '}
+                                    1 capital letter (A–Z){' '}
+                                </p>
+                                <p className="flex items-center gap-2 text-gray-500 text-xs">
+                                    {validations.hasLowercase ? (
+                                        <FaCheck className="text-green-500" />
+                                    ) : (
+                                        <MdError className="text-red-500" />
+                                    )}{' '}
+                                    1 lowercase letter (a–z)
+                                </p>
+                                <p className="flex items-center gap-2 text-gray-500 text-xs">
+                                    {validations.hasNumber ? (
+                                        <FaCheck className="text-green-500" />
+                                    ) : (
+                                        <MdError className="text-red-500" />
+                                    )}{' '}
+                                    1 number (0–9)
+                                </p>
+                                <p className="flex items-center gap-2 text-gray-500 text-xs">
+                                    {validations.hasSpecialChar ? (
+                                        <FaCheck className="text-green-500" />
+                                    ) : (
+                                        <MdError className="text-red-500" />
+                                    )}{' '}
+                                    1 special symbol (!@#$%^&*)
+                                </p>
+                                <p className="flex items-center gap-2 text-gray-500 text-xs">
+                                    {validations.hasMinLength ? (
+                                        <FaCheck className="text-green-500" />
+                                    ) : (
+                                        <MdError className="text-red-500" />
+                                    )}{' '}
+                                    8 characters minimum (8 letters)
+                                </p>
+                            </div>
+                        </div>
 
                         <button
                             type="submit"
@@ -205,19 +303,19 @@ export default function Login() {
                                         Signing in...
                                     </>
                                 ) : (
-                                    'Sign In'
+                                    'Sign Up'
                                 )}
                             </span>
                         </button>
                     </form>
 
                     <p className="text-gray-400 text-sm">
-                        New here?{' '}
+                        Already have an account?{' '}
                         <Link
                             className="text-violet-400 hover:text-violet-300 transition-colors font-medium"
-                            to={'/register'}
+                            to={'/login'}
                         >
-                            Create an Account
+                            Login
                         </Link>
                     </p>
                 </div>
@@ -234,16 +332,16 @@ export default function Login() {
                             <Typewriter
                                 speed={80}
                                 texts={[
-                                    'Welcome Back!',
-                                    'Back in action!',
-                                    'Secure and fast login',
-                                    'Shall we continue?',
+                                    'Welcome!',
+                                    'Shall we get started?',
+                                    'Create your account',
+                                    'Sign up securely',
                                 ]}
                             />
                         </h2>
                         <p className="text-center text-gray-100">
-                            Sign in to access your account and continue from
-                            where you left off.
+                            Start now and have full access to what we have
+                            prepared for you.
                         </p>
                         <div className="w-12 h-1 bg-violet-400 my-2 rounded-full"></div>
                     </div>
