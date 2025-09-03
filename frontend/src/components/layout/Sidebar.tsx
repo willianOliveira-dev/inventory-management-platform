@@ -22,7 +22,7 @@ export default function Sidebar() {
     };
 
     return (
-        <aside className=" w-full max-w-65 py-4 bg-stone-950">
+        <aside className=" w-full max-w-65 py-4 bg-indigo-950">
             <div className="flex flex-col items-center size-full gap-2">
                 <h2 className="flex items-center self-start text-3xl text-gray-300 font-bold px-5 tracking-tighter">
                     Stock
