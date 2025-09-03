@@ -1,5 +1,5 @@
-import LoadingSpinner from '../components/LoadingSpinner';
-import Typewriter from '../components/typewriter/Typewriter';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
+import Typewriter from '../components/common/typewriter/Typewriter';
 import Logo from '../assets/logo.png';
 import backgroundLogin from '../assets/backgroundLogin.webp';
 import { useState } from 'react';

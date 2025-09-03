@@ -1,7 +1,7 @@
-import LoadingSpinner from '../components/LoadingSpinner';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
 import backgroundLogin from '../assets/backgroundLogin.webp';
 import Logo from '../assets/logo.png';
-import Typewriter from '../components/typewriter/Typewriter';
+import Typewriter from '../components/common/typewriter/Typewriter';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, type FormEvent } from 'react';

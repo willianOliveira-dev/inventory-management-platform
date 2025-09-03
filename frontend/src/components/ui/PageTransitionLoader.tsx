@@ -1,12 +1,9 @@
-import Logo from '../assets/logo.png';
-import { useNavigation } from 'react-router-dom';
+import Logo from '../../assets/logo.png';
+import {  type PageTransitionLoader } from '../../types';
 
-export default function PageTransitionLoader() {
-    const navigation = useNavigation();
+export default function PageTransitionLoader({active = false}: PageTransitionLoader) {
 
-    if (navigation.state !== 'loading') {
-        return null;
-    }
+    if(!active) return null;
 
     return (
         <div className="min-h-screen bg-stone-950 flex items-center justify-center overflow-hidden">
@@ -37,9 +34,9 @@ export default function PageTransitionLoader() {
                     </div>
                 </div>
 
-                <h1 className="text-2xl font-light text-white mb-2 tracking-widest">
-                    ESTOQUE
-                    <span className="font-bold text-violet-700">PRO</span>
+                <h1 className="text-4xl text-white mb-2 tracking-tighter font-bold">
+                    Stock
+                    <span className="bg-gradient-to-r bg-clip-text text-transparent from-violet-500 via-violet-700 to-violet-900">Wise</span>
                 </h1>
 
                 <div className="w-64 mx-auto mb-4">

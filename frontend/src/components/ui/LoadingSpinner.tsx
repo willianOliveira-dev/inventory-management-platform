@@ -1,4 +1,4 @@
-import { type LoadingSpinnerProps } from '../types';
+import { type LoadingSpinnerProps } from '../../types';
 
 export default function LoadingSpinner({
     size = 'md',

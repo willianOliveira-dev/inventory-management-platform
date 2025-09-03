@@ -1,13 +1,13 @@
-import type { ProtectedRoute } from '../types';
-import { useAuth } from '../hooks/useAuth';
+import PageTransitionLoader from '../ui/PageTransitionLoader';
+import { useAuth } from '../../hooks/useAuth';
 import { Navigate } from 'react-router-dom';
-import PageTransitionLoader from './PageTransitionLoader';
+import { type ProtectedRoute } from '../../types';
 
 export default function ProtectedRoute({ children }: ProtectedRoute) {
     const { user, isLoading } = useAuth();
 
     if (isLoading) {
-        return <PageTransitionLoader />;
+        return <PageTransitionLoader active />;
     }
 
     if (!user) {
