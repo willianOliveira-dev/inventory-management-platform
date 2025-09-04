@@ -22,7 +22,7 @@ export default function Sidebar() {
     };
 
     return (
-        <aside className=" w-full max-w-65 py-4 bg-indigo-950">
+        <aside data-aos="fade-right" data-aos-duration="1500" className="hidden md:block relative w-full max-w-65 py-4 bg-indigo-950 col-start-1 row-start-1 row-span-3 duration-300">
             <div className="flex flex-col items-center size-full gap-2">
                 <h2 className="flex items-center self-start text-3xl text-gray-300 font-bold px-5 tracking-tighter">
                     Stock
@@ -42,10 +42,15 @@ export default function Sidebar() {
                     <NavSidebar />
                     <div className="flex justify-between bg-violet-500/20 px-4 py-2 rounded-md text-gray-300 ">
                         <div className="flex gap-2 items-center">
-                            <Avatar name={user?.name!} size="40"  round={true} />
-                            <h3 className="text-sm">{user?.name!}</h3>
+                            <Avatar name={user?.name!} size="40" round={true} />
+                            <h3 className="text-sm tracking-tighter">{user?.name!}</h3>
                         </div>
-                        <button className="text-xl cursor-pointer" onClick={handleLogout} title='Exit' aria-label='Exit button'>
+                        <button
+                            className="text-xl cursor-pointer"
+                            onClick={handleLogout}
+                            title="Exit"
+                            aria-label="Exit button"
+                        >
                             <IoMdExit />
                         </button>
                     </div>

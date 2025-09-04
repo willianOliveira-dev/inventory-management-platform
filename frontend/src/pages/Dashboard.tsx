@@ -1,17 +1,16 @@
 import Sidebar from '../components/layout/Sidebar';
+import MainContent from '../components/layout/MainContent';
+import DashboardLayout from '../components/layout/DashboardLayout';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
-import { Outlet } from 'react-router-dom';
 
 export default function Dashboard() {
     return (
-        <div>
+        <DashboardLayout>
             <Header />
             <Sidebar />
-            <main>
-                <Outlet />
-            </main>
+            <MainContent />
             <Footer />
-        </div>
+        </DashboardLayout>
     );
 }
