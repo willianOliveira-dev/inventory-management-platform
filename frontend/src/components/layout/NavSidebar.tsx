@@ -1,3 +1,4 @@
+import ExitButton from '../ui/ExitButton';
 import { MdOutlineDashboard } from 'react-icons/md';
 import { IoPricetagsOutline } from 'react-icons/io5';
 import { FaBoxOpen } from 'react-icons/fa';
@@ -21,7 +22,7 @@ export default function NavSideBar() {
         { to: '/reports', label: 'Reports', icon: <FaChartBar /> },
     ];
     return (
-        <div>
+        <div className="flex flex-col justify-between h-full">
             <ul className="flex flex-col gap-2">
                 {links.map((link, idx) => {
                     return (
@@ -42,6 +43,7 @@ export default function NavSideBar() {
                     );
                 })}
             </ul>
+            <ExitButton />
         </div>
     );
 }

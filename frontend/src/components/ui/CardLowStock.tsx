@@ -8,29 +8,31 @@ export default function CardLowStock({
     price,
     className = '' 
 }: CardLowStock) {
+
     return (
-        <div className={`flex justify-between items-center rounded-md shadow-xl p-2 ${className}`}>
-            <div className="space-y-[3.5px]">
-                <h3 className="font-lighten tracking-tighter">{nameProduct}</h3>
-                <div className="flex gap-2">
-                    <span className="block text-[14px] text-center py-[2.5px] px-[5px] rounded-full text-blue-700 bg-blue-300/80 hover:opacity-90">
+        <div className={`flex flex-col justify-between items-start rounded-md shadow-md p-3 bg-rose-300/90 ring ring-rose-900 ${className}`}>
+            <div className="w-full space-y-2">
+                <h3 className="font-semibold text-red-800">{nameProduct}</h3>
+                <div className="flex gap-2 items-center flex-1 min-w-0 flex-wrap">
+                    <span className="text-xs text-center py-1 px-2 rounded-full text-blue-700 bg-blue-100">
                         {category}
                     </span>
-                    <span className="block text-[12px] font-light rounded-full py-[2.5px] px-[5px] bg-red-500/80 ">
+                    <span className="text-xs font-medium rounded-full py-1 px-2 bg-red-100 text-red-700">
                         {quantityBelow} remaining
                     </span>
-                    <span className="font-light text-[12px]">{price}</span>
                 </div>
-            </div>
-            <div className="flex items-center gap-2">
-                <div className="hover:bg-gray-700/40 p-2 rounded-md cursor-pointer">
-                    <FaPen />
-                </div>
-                <div className="hover:bg-gray-700/40 p-2 rounded-md cursor-pointer">
-                    <FaEye />
+                <div className="flex justify-between items-center w-full mt-2">
+                    <span className="font-medium text-gray-900 truncate">{(price)}</span>
+                    <div className="flex items-center gap-2">
+                        <button className="hover:bg-gray-200 p-2 rounded-md cursor-pointer transition-colors">
+                            <FaPen className="text-gray-600 text-sm" />
+                        </button>
+                        <button className="hover:bg-gray-200 p-2 rounded-md cursor-pointer transition-colors">
+                            <FaEye className="text-gray-600 text-sm" />
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
-

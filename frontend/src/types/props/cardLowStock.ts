@@ -2,6 +2,6 @@ export interface CardLowStock {
     nameProduct: string;
     category: string;
     quantityBelow: number;
-    price: string;
+    price: number;
     className?: string;
 }

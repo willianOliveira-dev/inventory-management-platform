@@ -1,61 +1,62 @@
 import Logo from '../../assets/logo.png';
-import Avatar from 'react-avatar';
 import NavSidebar from './NavSidebar';
-import { useNavigate } from 'react-router-dom';
-import { IoMdExit } from 'react-icons/io';
-import { useAuth } from '../../hooks/useAuth';
+import CloseMenu from '../ui/CloseMenu';
+import { useMenu } from '../../hooks/useMenu';
+import { useEffect, useRef } from 'react';
 
 export default function Sidebar() {
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
+    const { showMenu, handleCloseMenu } = useMenu();
+    const asideRef = useRef<HTMLElement>(null);
 
-    const handleLogout = async () => {
-        if (!user) {
-            navigate('/login');
-            return;
+    useEffect(() => {
+        if (showMenu && window.innerWidth <= 1280) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
         }
-        try {
-            await logout();
-        } catch (err: unknown) {
-            navigate('/login');
-        }
-    };
+
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [showMenu]);
 
     return (
-        <aside data-aos="fade-right" data-aos-duration="1500" className="hidden md:block relative w-full max-w-65 py-4 bg-indigo-950 col-start-1 row-start-1 row-span-3 duration-300">
-            <div className="flex flex-col items-center size-full gap-2">
-                <h2 className="flex items-center self-start text-3xl text-gray-300 font-bold px-5 tracking-tighter">
-                    Stock
-                    <span className="bg-gradient-to-r bg-clip-text text-transparent from-violet-500 via-violet-700 to-violet-900">
-                        Wise
-                    </span>
-                    <span className="block w-10 h-10">
-                        <img
-                            className="block size-full mix-blend-screen"
-                            src={Logo}
-                            alt="Logo"
-                        />
-                    </span>
-                </h2>
-                <div className="h-[1px] w-full bg-gradient-to-r from-violet-300 via-purple-400 to-violet-500"></div>
-                <div className="flex flex-col justify-between size-full p-5">
-                    <NavSidebar />
-                    <div className="flex justify-between bg-violet-500/20 px-4 py-2 rounded-md text-gray-300 ">
-                        <div className="flex gap-2 items-center">
-                            <Avatar name={user?.name!} size="40" round={true} />
-                            <h3 className="text-sm tracking-tighter">{user?.name!}</h3>
-                        </div>
-                        <button
-                            className="text-xl cursor-pointer"
-                            onClick={handleLogout}
-                            title="Exit"
-                            aria-label="Exit button"
-                        >
-                            <IoMdExit />
-                        </button>
+        <>
+            {showMenu && window.innerWidth <= 1280 && (
+                <div
+                    onClick={handleCloseMenu}
+                    className="fixed inset-0 bg-black/80 z-10"
+                ></div>
+            )}
+            <aside
+                ref={asideRef}
+                className={`${
+                    showMenu ? 'translate-x-0' : '-translate-x-full'
+                } block w-full max-w-65 absolute top-0 left-0 h-screen py-4 bg-indigo-950 duration-300 sm:bottom-0 sm:h-auto xl:translate-x-0 xl:static xl:col-start-1 xl:row-start-1 xl:row-span-3 z-20`}
+            >
+                <div className="flex flex-col items-center size-full gap-2">
+                    <div className="flex items-center justify-between w-full px-5">
+                        <h2 className="flex items-center self-start text-3xl text-gray-300 font-bold tracking-tighter">
+                            Stock
+                            <span className="bg-gradient-to-r bg-clip-text text-transparent from-violet-500 via-violet-700 to-violet-900">
+                                Wise
+                            </span>
+                            <span className="block w-10 h-10">
+                                <img
+                                    className="block size-full mix-blend-screen"
+                                    src={Logo}
+                                    alt="Logo"
+                                />
+                            </span>
+                        </h2>
+                        <CloseMenu onClick={handleCloseMenu} />
+                    </div>
+                    <div className="h-[1px] w-full bg-gradient-to-r from-violet-300 via-purple-400 to-violet-500"></div>
+                    <div className="size-full p-5">
+                        <NavSidebar />
                     </div>
                 </div>
-            </div>
-        </aside>
+            </aside>
+        </>
     );
 }

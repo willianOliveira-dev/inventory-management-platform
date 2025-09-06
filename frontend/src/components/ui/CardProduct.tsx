@@ -1,32 +1,40 @@
 import { type CardProduct } from '../../types';
 import { FaEye, FaPen } from 'react-icons/fa';
+
 export default function CardProduct({
     nameProduct,
     category,
     quantity,
     price,
-    className = '' 
+    className = '',
 }: CardProduct) {
+   
     return (
-        <div className={`flex justify-between items-center rounded-md shadow-xl p-2 ${className}`}>
-            <div className="space-y-[3.5px]">
-                <h3 className="font-lighten tracking-tighter">{nameProduct}</h3>
-                <div className="flex gap-2">
-                    <span className="block rounded-full text-[14px] text-center py-[2.5px] px-[5px] text-blue-700 bg-blue-300/80 hover:opacity-90">
+        <div
+            className={`flex flex-col justify-between items-start rounded-md shadow-md p-3 bg-stone-900  ring ring-gray-200 ${className}`}
+        >
+            <div className="w-full space-y-2">
+                <h3 className="font-semibold text-white">{nameProduct}</h3>
+                <div className="flex gap-2 items-center flex-1 min-w-0 flex-wrap">
+                    <span className="text-xs text-center py-1 px-2 rounded-full text-blue-700 bg-blue-100">
                         {category}
                     </span>
-                    <span className="font-light text-[13.3px]">
+                    <span className="text-xs text-center py-1 px-2 rounded-full text-gray-300 ">
                         Qtd: {quantity}
                     </span>
-                    <span className="font-light text-[13.3px]">{price}</span>
                 </div>
-            </div>
-            <div className="flex items-center gap-2">
-                <div className="hover:bg-gray-700/40 p-2 rounded-md cursor-pointer">
-                    <FaPen />
-                </div>
-                <div className="hover:bg-gray-700/40 p-2 rounded-md cursor-pointer">
-                    <FaEye />
+                <div className="flex justify-between items-center w-full mt-2">
+                    <span className="font-medium text-gray-300 truncate">
+                        {price}
+                    </span>
+                    <div className="flex items-center gap-2">
+                        <button className="hover:bg-blue-200 p-2 rounded-md cursor-pointer transition-colors">
+                            <FaPen className="text-gray-600 text-sm" />
+                        </button>
+                        <button className="hover:bg-blue-200 p-2 rounded-md cursor-pointer transition-colors">
+                            <FaEye className="text-gray-600 text-sm" />
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
