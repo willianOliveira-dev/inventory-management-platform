@@ -1,7 +1,7 @@
 import api from '../api/api';
 import authApi from '../api/authApi';
 import TokenStorage from '../utils/TokenStorage';
-import AuthContext from '../context/authContext';
+import AuthContext from '../contexts/authContext';
 import { useEffect, useState } from 'react';
 import type {
     User,

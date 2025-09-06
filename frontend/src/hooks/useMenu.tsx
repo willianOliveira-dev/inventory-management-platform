@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import BurgerMenuContext from '../context/burgerMenuContext';
+import BurgerMenuContext from '../contexts/burgerMenuContext';
 
 export function useMenu() {
     const context = useContext(BurgerMenuContext);

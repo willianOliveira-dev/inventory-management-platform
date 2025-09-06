@@ -1,4 +1,4 @@
-import BurgerMenuContext from '../context/burgerMenuContext';
+import BurgerMenuContext from '../contexts/burgerMenuContext';
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
