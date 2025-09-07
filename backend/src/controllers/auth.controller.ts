@@ -33,6 +33,7 @@ export default class AuthController {
 
         res.clearCookie('refreshToken', {
             httpOnly: true,
+            path: "/panel/v1/auth/refresh",
             sameSite: 'strict',
             secure: process.env.NODE_ENV === 'production',
         });
@@ -177,7 +178,7 @@ export default class AuthController {
             httpOnly: true,
             sameSite: 'strict',
             secure: process.env.NODE_ENV === 'production',
-            path: '/auth/refresh',
+            path: '/panel/v1/auth/refresh',
             expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         });
 

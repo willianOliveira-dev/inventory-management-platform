@@ -8,12 +8,7 @@ const ItemSchema = z.object({
         .min(3, { error: 'Item name must be at least 3 characters long.' })
         .max(300, {
             error: 'The item name must be a maximum of 300 characters.',
-        })
-        .regex(
-            /^[A-Za-zÀ-ÖØ-öø-ÿ0-9 '"\-\/\\,]+$/,
-            'Only letters, numbers, spaces, hyphens, single and double quotes, commas, forward slashes, and backslashes are allowed.'
-        )
-        .transform((str) => str.trim()),
+        }).transform((str) => str.trim()),
     category_id: z.uuid(),
     description: z
         .string({ error: emptyErrorMap })
