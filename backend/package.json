@@ -1,6 +1,6 @@
 {
     "name": "backend",
-    "version": "0.2.3-backend-beta",
+    "version": "0.2.4-backend-beta",
     "description": "",
     "main": "app.ts",
     "scripts": {
