@@ -10,7 +10,7 @@ const router: Router = Router();
 
 router.post('/login', zodAsyncValidation(AuthSchema), authController.login);
 router.post('/register',zodAsyncValidation(UserSchema), authController.register);
-router.post('/refresh',zodAsyncValidation(AuthSchema), authController.refresh);
+router.post('/refresh', authController.refresh);
 router.post('/logout', authController.logout);
 router.get('/me', authMiddleware, authController.getMe)
 
