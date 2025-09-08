@@ -4,7 +4,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
-import rateLimit from 'express-rate-limit';
 import errorHandler from 'middlewares/errorHandler';
 import { userRouter, itemRouter, categoryRouter, authRouter } from '@routes/index.route';
 
@@ -18,7 +17,6 @@ app.use(cors({ origin: 'http://localhost:5173', credentials: true}));
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(cookieParser());
-app.use(rateLimit({ windowMs: 60 * 1000, limit: 10}));
 app.use(`${BASE_API_ROUTE}/auth`, authRouter);
 app.use(`${BASE_API_ROUTE}/users`, userRouter);
 app.use(`${BASE_API_ROUTE}/items`, itemRouter);
