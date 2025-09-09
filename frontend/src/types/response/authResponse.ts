@@ -1,4 +1,4 @@
-import type { User } from "../user/user";
+import type { User } from '../entities/user';
 
 export interface AuthResponse {
     status: 'success' | 'error';

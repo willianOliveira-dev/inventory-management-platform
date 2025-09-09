@@ -2,8 +2,10 @@
 @import 'tailwindcss';
 
 @layer base {
+    html,
     body {
         font-family: 'Poppins', sans-serif;
+        overflow-y: hidden;
     }
 }
 

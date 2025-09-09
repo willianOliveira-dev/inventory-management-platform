@@ -5,22 +5,22 @@ import ButtonLink from '../components/ui/ButtonLink';
 import imageCollectingData from '../assets/collecting-data.webp';
 import { useAuth } from '../hooks/useAuth';
 import { FaBoxOpen } from 'react-icons/fa';
+import { useNav } from '../hooks/useNav';
 import { LuChartNoAxesCombined } from 'react-icons/lu';
 import { IoCalendarNumberOutline } from 'react-icons/io5';
 import { FiAlertTriangle } from 'react-icons/fi';
+import { useCategories } from '../hooks/useCategories';
 
 export default function Home() {
+    const { setCategorySelect } = useCategories();
+    const { setNav } = useNav();
     const { user } = useAuth();
     return (
         <section className="flex flex-col gap-6 p-6">
-            <div
-                data-aos="fade-up"
-                data-aos-duration="1400"
-                className="relative max-w-150 bg-violet-400 py-6 px-4 rounded-2xl overflow-hidden"
-            >
+            <div className="relative max-w-150 bg-violet-400 py-6 px-4 rounded-2xl overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-950/80 via-purple-950/60 to-transparent z-10"></div>
                 <img
-                    className="absolute top-1/2 -translate-y-1/2 right-0 w-50 h-30 z-0 sm:w-60 sm:h-40 sm:fixed"
+                    className="absolute top-1/2 -translate-y-1/2 right-0 w-50 h-30 z-0 sm:w-60 sm:h-40"
                     src={imageCollectingData}
                     alt=""
                     loading="lazy"
@@ -37,11 +37,7 @@ export default function Home() {
                     </p>
                 </div>
             </div>
-            <div
-                data-aos="fade-up"
-                data-aos-duration="1600"
-                className="grid grid-cols-4 gap-2 w-full max-lg:grid-cols-2 max-sm:grid-cols-1"
-            >
+            <div className="grid grid-cols-4 gap-2 w-full max-lg:grid-cols-2 max-sm:grid-cols-1">
                 <ReportCardView
                     label="Total Products"
                     data="5"
@@ -75,11 +71,7 @@ export default function Home() {
                     }
                 />
             </div>
-            <div
-                data-aos="fade-up"
-                data-aos-duration="1800"
-                className="flex gap-4 text-white w-full media-screen-851"
-            >
+            <div className="flex gap-4 text-white w-full media-screen-851">
                 <div className="flex flex-col w-full lg:w-1/2 p-2 ring ring-gray-700/40 bg-stone-950 rounded-md ">
                     <h2 className="flex gap-2 items-center p-4 tracking-tighter sm:text-xl">
                         <IoCalendarNumberOutline />
@@ -117,7 +109,15 @@ export default function Home() {
                             price={2500.0}
                         />
                     </div>
-                    <ButtonLink to={'/products'} text="See all Products" />
+                    <ButtonLink
+                        to={'/products'}
+                        onClick={() => {
+                            setNav('/products');
+                            setCategorySelect('All Categories');
+                        }}
+                        className="border-2 border-purple-600 text-purple-600 text-center px-8 py-3 rounded-lg font-medium transition-all duration-700 hover:bg-violet-600 hover:text-white hover:shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
+                        text="See all Products"
+                    />
                 </div>
                 <div className="flex flex-col w-full lg:w-1/2 p-2 ring ring-gray-700/40 bg-stone-950 rounded-md">
                     <h2 className="flex gap-2 items-center p-4 tracking-tighter sm:text-xl ">
@@ -158,6 +158,11 @@ export default function Home() {
                     </div>
                     <ButtonLink
                         to={'/products'}
+                        onClick={() => {
+                            setNav('/products');
+                            setCategorySelect('Low Stock');
+                        }}
+                        className="border-2 border-purple-600 text-purple-600 text-center px-8 py-3 rounded-lg font-medium transition-all duration-700 hover:bg-violet-600 hover:text-white hover:shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
                         text={'View all low stock items'}
                     />
                 </div>

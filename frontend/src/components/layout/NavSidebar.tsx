@@ -5,10 +5,10 @@ import { FaBoxOpen } from 'react-icons/fa';
 import { FaChartBar } from 'react-icons/fa';
 import { IoMdAdd } from 'react-icons/io';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useNav } from '../../hooks/useNav';
 
 export default function NavSideBar() {
-    const [active, setActive] = useState<number>(0);
+    const { nav, setNav } = useNav();
 
     const links = [
         { to: '/', label: 'Dashboard', icon: <MdOutlineDashboard /> },
@@ -29,13 +29,16 @@ export default function NavSideBar() {
                         <li key={idx}>
                             <Link
                                 className={`flex items-center gap-4 text-violet-400 p-2 rounded-xl text-violet-300 ${
-                                    active === idx
+                                    nav === link.to
                                         ? 'bg-violet-400/30'
                                         : 'hover:bg-violet-400/30 duration-400 ease-in'
                                 }`}
                                 to={link.to}
-                                onClick={() => setActive(idx)}
+                                onClick={() => setNav(link.to)}
                                 aria-label={`${link.label} Link`}
+                                aria-current={
+                                    nav == link.to ? 'page' : undefined
+                                }
                             >
                                 {link.icon} {link.label}
                             </Link>

@@ -2,21 +2,15 @@ import api from '../api/api';
 import authApi from '../api/authApi';
 import TokenStorage from '../utils/TokenStorage';
 import AuthContext from '../contexts/authContext';
-import { useEffect, useState } from 'react';
-import type {
-    User,
-    LoginData,
-    RegisterData,
-    AuthContextType,
-    AuthProviderProps,
-} from '../types';
+import { useEffect, useState, type ReactNode } from 'react';
+import type { User, LoginData, RegisterData, AuthContextType } from '../types';
 
-export default function AuthProvider({ children }: AuthProviderProps) {
+export default function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const checkAuth = async () => {
-        const token: string | null = TokenStorage.getToken();
+        let token: string | null = TokenStorage.getToken();
 
         if (!token) {
             setIsLoading(false);

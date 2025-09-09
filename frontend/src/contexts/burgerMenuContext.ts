@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { type BurgerContextType } from '../types/context/burgerContextType';
+import { type BurgerContextType } from '../types/contexts/burgerContextType';
 
 const BurgerMenuContext = createContext<BurgerContextType | null>(null);
 

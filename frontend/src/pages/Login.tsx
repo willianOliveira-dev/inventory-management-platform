@@ -61,7 +61,11 @@ export default function Login() {
 
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-full blur-3xl"></div>
             </div>
-            <div data-aos="fade-up" data-aos-duration="1500" className="flex w-full max-w-5xl rounded-2xl shadow-[0_0_30px_0_rgba(116,28,233,0.25)] text-white overflow-hidden z-10">
+            <div
+                data-aos="fade-up"
+                data-aos-duration="1500"
+                className="flex w-full max-w-5xl rounded-2xl shadow-[0_0_30px_0_rgba(116,28,233,0.25)] text-white overflow-hidden z-10"
+            >
                 <div className="flex flex-col w-full md:w-1/2 justify-center items-center gap-6 p-8">
                     <h2 className="flex justify-items items-center gap-2 text-3xl font-bold bg-gradient-to-r from-violet-500 via-cyan-600 to-violet-700 bg-clip-text text-transparent">
                         Sign In{' '}
@@ -94,6 +98,7 @@ export default function Login() {
                                             : 'border-gray-600 focus:border-violet-500 focus:ring-violet-500 '
                                     }`}
                                 placeholder=" "
+                                autoComplete='email'
                                 required
                             />
                             <label
@@ -137,6 +142,7 @@ export default function Login() {
                                         }`}
                                     placeholder=" "
                                     required
+                                    autoComplete="current-password"
                                 />
                                 <label
                                     htmlFor="password"

@@ -6,7 +6,7 @@ import axios, {
 import TokenStorage from '../utils/TokenStorage';
 
 const api: AxiosInstance = axios.create({
-    baseURL: 'http://localhost:5000',
+    baseURL: 'http://localhost:5000/panel/v1',
     withCredentials: true,
 });
 
@@ -36,8 +36,8 @@ api.interceptors.response.use(
         if (error.response?.status === 403 && !originalRequest?._retry) {
             originalRequest!._retry = true;
             try {
-                const { data } = await api.post('panel/v1/auth/refresh');
-                const newAccessToken = data.accessToken;
+                const { data } = await api.post('/auth/refresh');
+                const newAccessToken = data.data;
 
                 TokenStorage.setToken(newAccessToken);
 
