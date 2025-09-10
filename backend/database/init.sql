@@ -3,7 +3,7 @@ USE control_panel_db;
 
 CREATE TABLE IF NOT EXISTS users(
 	user_id CHAR(36),
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(50) NOT NULL,
     email VARCHAR(150) NOT NULL,
     password VARCHAR(250) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users(
 CREATE TABLE IF NOT EXISTS categories(
 	category_id CHAR(36),
     user_id CHAR(36) NOT NULL,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(120) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT pk_category PRIMARY KEY (category_id),
@@ -27,9 +27,9 @@ CREATE TABLE IF NOT EXISTS items(
 	item_id CHAR(36),
     user_id CHAR(36) NOT NULL,
 	category_id CHAR(36) NOT NULL,
-    name VARCHAR(300) NOT NULL,
+    name VARCHAR(120) NOT NULL,
     price_cents INT NOT NULL,
-    description TEXT NOT NULL,
+    description VARCHAR(500) NOT NULL,
     current_quantity INT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

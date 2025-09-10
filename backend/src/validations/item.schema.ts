@@ -6,13 +6,18 @@ const ItemSchema = z.object({
         .string({ error: emptyErrorMap })
         .nonempty({ error: 'Name cannot be left blank.' })
         .min(3, { error: 'Item name must be at least 3 characters long.' })
-        .max(300, {
-            error: 'The item name must be a maximum of 300 characters.',
-        }).transform((str) => str.trim()),
+        .max(120, {
+            error: 'The item name must be a maximum of 120 characters.',
+        })
+        .transform((str) => str.trim()),
     category_id: z.uuid(),
     description: z
         .string({ error: emptyErrorMap })
         .nonempty({ error: 'Description cannot be left blank.' })
+        .min(50, { error: 'Description must be at least 50 characters long.' })
+        .max(500, {
+            error: 'The Description must be a maximum of 500 characters.',
+        })
         .transform((str) => str.trim()),
     price_cents: z
         .number({ error: emptyErrorMap })

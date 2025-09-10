@@ -6,7 +6,7 @@ const UserSchema = z.object({
         .string({ error: emptyErrorMap })
         .nonempty({ error: 'Name cannot be left blank.' })
         .min(3, { error: 'The name must be at least 3 characters long.' })
-        .max(100, { error: 'The name must have a maximum of 100 characters.' })
+        .max(50, { error: 'The name must have a maximum of 50 characters.' })
         .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ ]+$/, 'Only letters and spaces.')
         .transform((str) => str.trim()),
     email: z.email({ error: 'Invalid email format.' }),
