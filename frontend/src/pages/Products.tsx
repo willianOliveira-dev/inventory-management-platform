@@ -5,6 +5,7 @@ import formatDate from '../utils/formatDate';
 import ButtonLink from '../components/ui/ButtonLink';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { IoTrashBinOutline } from 'react-icons/io5';
+import { IoMdAdd } from 'react-icons/io';
 import { IoSearch } from 'react-icons/io5';
 import { FaBoxOpen, FaEye, FaPen } from 'react-icons/fa';
 import { BsBoxSeam } from 'react-icons/bs';
@@ -17,9 +18,8 @@ export default function Products() {
     const [search, setSearch] = useState<string>('');
     const { items, categoryIds, isLoading } = useItems();
     const categoriesFilter = useCategories();
-    
-    const productsFilter = useMemo(() => {
 
+    const productsFilter = useMemo(() => {
         return items.filter((item) => {
             const nameMatch: boolean = item.name
                 .toLowerCase()
@@ -29,7 +29,8 @@ export default function Products() {
                 categoriesFilter.categorySelect === 'All Categories' ||
                 (categoriesFilter.categorySelect == 'Low Stock' &&
                     item.current_quantity < 10) ||
-                categoryIds[item.category_id] === categoriesFilter.categorySelect;
+                categoryIds[item.category_id] ===
+                    categoriesFilter.categorySelect;
 
             return nameMatch && categoryMatch;
         });
@@ -47,9 +48,10 @@ export default function Products() {
                     </p>
                 </div>
                 <ButtonLink
-                    className='className="flex gap-2 items-center text-white p-2 md:p-3 rounded-md cursor-pointer bg-sky-500 hover:bg-sky-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-gray-900"'
+                    className='flex gap-2 items-center text-white p-2 md:p-3 rounded-md cursor-pointer bg-sky-500 hover:bg-sky-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-gray-900'
                     to="/products/new"
                     text="Add Product"
+                    icon={<IoMdAdd />}
                 />
             </header>
             <div className="px-2">
@@ -75,7 +77,7 @@ export default function Products() {
                             Type product name to search
                         </div>
                     </div>
-                    <ButtonFilterCategories/>
+                    <ButtonFilterCategories />
                 </div>
             </div>
             <div className="space-y-2 mt-4 py-4 px-2 bg-stone-900 rounded-md">
@@ -115,7 +117,7 @@ export default function Products() {
                                         }) => (
                                             <tr
                                                 key={item_id}
-                                                className="hover:bg-stone-700 transition-colors text-gray-100"
+                                                className="text-start hover:bg-stone-700 transition-colors text-gray-100"
                                             >
                                                 <td className="px-4 py-3 max-w-[220px]">
                                                     <div className="flex flex-col gap-[2px]">
@@ -148,8 +150,8 @@ export default function Products() {
                                                     ) : (
                                                         <div className="flex items-center gap-2 text-red-500">
                                                             {current_quantity}{' '}
-                                                            <span className="text-xs text-white bg-red-500 p-2 rounded-full">
-                                                                Baixo
+                                                            <span className="text-xs text-white bg-red-500 py-[2px] px-2 rounded-full">
+                                                                Low
                                                             </span>
                                                         </div>
                                                     )}
@@ -196,9 +198,10 @@ export default function Products() {
                                 product.
                             </p>
                             <ButtonLink
-                                className='className="flex gap-2 items-center text-white p-2 md:p-3 rounded-md cursor-pointer bg-sky-500 hover:bg-sky-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-gray-900"'
+                                className='flex gap-2 items-center text-white p-2 md:p-3 rounded-md cursor-pointer bg-sky-500 hover:bg-sky-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-gray-900'
                                 to="/products/new"
                                 text="Add Product"
+                                icon={<IoMdAdd />}
                             />
                         </div>
                     )}

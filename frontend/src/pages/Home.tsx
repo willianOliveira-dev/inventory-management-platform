@@ -5,7 +5,7 @@ import ButtonLink from '../components/ui/ButtonLink';
 import imageCollectingData from '../assets/collecting-data.webp';
 import { useAuth } from '../hooks/useAuth';
 import { FaBoxOpen } from 'react-icons/fa';
-import { useNav } from '../hooks/useNav';
+// import { useNav } from '../hooks/useNav';
 import { LuChartNoAxesCombined } from 'react-icons/lu';
 import { IoCalendarNumberOutline } from 'react-icons/io5';
 import { FiAlertTriangle } from 'react-icons/fi';
@@ -13,8 +13,9 @@ import { useCategories } from '../hooks/useCategories';
 
 export default function Home() {
     const { setCategorySelect } = useCategories();
-    const { setNav } = useNav();
+    // const { setNav } = useNav();
     const { user } = useAuth();
+
     return (
         <section className="flex flex-col gap-6 p-6">
             <div className="relative max-w-150 bg-violet-400 py-6 px-4 rounded-2xl overflow-hidden">
@@ -112,7 +113,7 @@ export default function Home() {
                     <ButtonLink
                         to={'/products'}
                         onClick={() => {
-                            setNav('/products');
+                            // setNav('/products');
                             setCategorySelect('All Categories');
                         }}
                         className="border-2 border-purple-600 text-purple-600 text-center px-8 py-3 rounded-lg font-medium transition-all duration-700 hover:bg-violet-600 hover:text-white hover:shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
@@ -159,7 +160,7 @@ export default function Home() {
                     <ButtonLink
                         to={'/products'}
                         onClick={() => {
-                            setNav('/products');
+                            // setNav('/products');
                             setCategorySelect('Low Stock');
                         }}
                         className="border-2 border-purple-600 text-purple-600 text-center px-8 py-3 rounded-lg font-medium transition-all duration-700 hover:bg-violet-600 hover:text-white hover:shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"

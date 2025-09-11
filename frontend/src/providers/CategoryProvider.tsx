@@ -13,6 +13,9 @@ export default function CategoryProvider({
         'All Categories',
         'Low Stock',
     ]);
+    const [categoryInfo, setCategoryInfo] = useState<{
+        [categoryName: string]: string;
+    }>({});
     const [categorySelect, setCategorySelect] =
         useState<string>('All Categories');
     const [active, setActive] = useState<number>(0);
@@ -23,10 +26,19 @@ export default function CategoryProvider({
             const getAllCategories = async () => {
                 const allCategories: Category[] =
                     await categoryApi.getAllMyCategories();
-                const categoriesMap = [
+
+                const categoryListName = [
                     ...allCategories.map(({ name }) => name),
                 ];
-                setCategories((prev) => [...prev, ...categoriesMap]);
+
+                const categoryMap: { [categoryName: string]: string } = {};
+
+                allCategories.forEach(({ category_id, name }) => {
+                    categoryMap[name] = category_id;
+                });
+
+                setCategories((prev) => [...prev, ...categoryListName]);
+                setCategoryInfo((prev) => ({ ...prev, ...categoryMap }));
             };
             getAllCategories();
         }
@@ -38,6 +50,7 @@ export default function CategoryProvider({
 
     const categoryData = {
         categories,
+        categoryInfo,
         categorySelect,
         setCategorySelect,
         active,
@@ -47,5 +60,9 @@ export default function CategoryProvider({
         handleShowCategories,
     };
 
-    return <CategoryContext.Provider value={categoryData}>{children}</CategoryContext.Provider>;
+    return (
+        <CategoryContext.Provider value={categoryData}>
+            {children}
+        </CategoryContext.Provider>
+    );
 }

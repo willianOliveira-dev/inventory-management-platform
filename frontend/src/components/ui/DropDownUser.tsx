@@ -1,7 +1,7 @@
+import ExitButton from './ExitButton';
 import { Link } from 'react-router-dom';
 import { CgProfile } from "react-icons/cg";
 import { FaUserEdit } from "react-icons/fa";
-import ExitButton from './ExitButton';
 
 export default function DropDownUser() {
     return (

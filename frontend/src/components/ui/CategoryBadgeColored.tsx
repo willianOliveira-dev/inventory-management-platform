@@ -35,7 +35,7 @@ export default function CategoryBadgeColored({
                 backgroundColor: bgColor,
                 color: textColor,
             }}
-            className="p-[4px] text-xs rounded-full"
+            className="font-bold py-[2px] px-[8px] text-xs rounded-full"
         >
             {category}
         </span>

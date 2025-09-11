@@ -19,7 +19,7 @@ export default function ExitButton() {
     };
     return (
         <button
-            className="flex items-center justify-between text-[15px] cursor-pointer w-full bg-blue-400 text-white p-2 rounded-md hover:bg-blue-500 duration-300 "
+            className="flex items-center justify-between text-[15px] cursor-pointer w-full bg-black text-white p-2 rounded-md hover:bg-stone-950 duration-300 "
             onClick={handleLogout}
             title="Sign Out"
             aria-label="Exit button"

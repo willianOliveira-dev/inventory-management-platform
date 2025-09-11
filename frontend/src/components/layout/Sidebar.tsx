@@ -1,11 +1,19 @@
 import Logo from '../../assets/logo.png';
-import NavSidebar from './NavSidebar';
-import CloseMenu from '../ui/CloseMenu';
-import { useBurgerMenu } from '../../hooks/useBurgerMenu';
+import ExitButton from '../ui/ExitButton';
+import { useState } from 'react';
 import { useEffect, useRef } from 'react';
+import { useBurgerMenu } from '../../hooks/useBurgerMenu';
+import { Link } from 'react-router-dom';
+import { MdOutlineDashboard } from 'react-icons/md';
+import { IoPricetagsOutline } from 'react-icons/io5';
+import { FaBoxOpen } from 'react-icons/fa';
+import { FaChartBar } from 'react-icons/fa';
+import { IoMdAdd } from 'react-icons/io';
+import { FiX } from 'react-icons/fi';
 
 export default function Sidebar() {
     const { showMenu, handleCloseMenu } = useBurgerMenu();
+    const [nav, setNav] = useState<string>('');
     const asideRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
@@ -19,6 +27,18 @@ export default function Sidebar() {
             document.body.style.overflow = 'auto';
         };
     }, [showMenu]);
+
+    const links = [
+        { to: '/', label: 'Dashboard', icon: <MdOutlineDashboard /> },
+        { to: '/products', label: 'Products', icon: <FaBoxOpen /> },
+        { to: '/products/new', label: 'Add Products', icon: <IoMdAdd /> },
+        {
+            to: '/categories',
+            label: 'Categories',
+            icon: <IoPricetagsOutline />,
+        },
+        { to: '/reports', label: 'Reports', icon: <FaChartBar /> },
+    ];
 
     return (
         <>
@@ -35,13 +55,13 @@ export default function Sidebar() {
                 } block w-full max-w-65 absolute top-0 left-0 h-screen py-4 bg-indigo-950 duration-300 xl:translate-x-0 xl:static xl:col-start-1 xl:row-start-1 xl:row-span-3 z-20`}
             >
                 <div className="flex flex-col items-center size-full gap-2">
-                    <div className="flex items-center justify-between w-full px-5">
-                        <h2 className="flex items-center self-start text-3xl text-gray-300 font-bold tracking-tighter">
+                    <div className="w-full flex justify-between px-5">
+                        <h2 className="flex items-center self-start text-2xl text-gray-300 font-bold tracking-tighter md:text-3xl">
                             Stock
                             <span className="bg-gradient-to-r bg-clip-text text-transparent from-violet-500 via-violet-700 to-violet-900">
                                 Wise
                             </span>
-                            <span className="block w-10 h-10">
+                            <span className="block w-8 h-8 sm:w-10 sm:h-10">
                                 <img
                                     className="block size-full mix-blend-screen"
                                     src={Logo}
@@ -49,11 +69,46 @@ export default function Sidebar() {
                                 />
                             </span>
                         </h2>
-                        <CloseMenu onClick={handleCloseMenu} />
+                        <button onClick={handleCloseMenu}>
+                            <FiX className="xl:hidden text-2xl text-white cursor-pointer hover:text-violet-300 duration-200" />
+                        </button>
                     </div>
-                    <div className="h-[1px] w-full bg-gradient-to-r from-violet-300 via-purple-400 to-violet-500"></div>
+                    <div className="h-[2px] w-full bg-gradient-to-r from-violet-300 via-purple-400 to-violet-500"></div>
                     <div className="size-full p-5">
-                        <NavSidebar />
+                        <div className="flex flex-col justify-between h-full">
+                            <ul className="flex flex-col gap-2">
+                                {links.map((link, idx) => {
+                                    return (
+                                        <li key={idx}>
+                                            <Link
+                                                className={`flex items-center gap-4 text-violet-400 p-2 rounded-xl text-violet-300 ${
+                                                    nav === link.to
+                                                        ? 'bg-violet-400/30'
+                                                        : 'hover:bg-violet-400/30 duration-400 ease-in'
+                                                }`}
+                                                to={link.to}
+                                                onClick={() => {
+                                                    setNav(link.to);
+                                                    if(showMenu && window.innerWidth <= 1280) {
+                                                        handleCloseMenu()
+                                                    }
+
+                                                }}
+                                                aria-label={`${link.label} Link`}
+                                                aria-current={
+                                                    nav == link.to
+                                                        ? 'page'
+                                                        : undefined
+                                                }
+                                            >
+                                                {link.icon} {link.label}
+                                            </Link>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                            <ExitButton />
+                        </div>
                     </div>
                 </div>
             </aside>

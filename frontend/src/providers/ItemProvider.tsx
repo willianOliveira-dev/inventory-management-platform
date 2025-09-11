@@ -45,7 +45,7 @@ export default function ItemProvider({children}: {children: ReactNode}) {
     }, []);
 
     const itemData = {
-        items, categoryIds, error, isLoading
+        items, setItems, categoryIds, error, isLoading
     }
 
 

@@ -1,7 +1,13 @@
 import { Link } from 'react-router-dom';
 import { type ButtonLink } from '../../types';
 
-export default function ButtonLink({ to, text , className="", onClick = undefined}: ButtonLink) {
+export default function ButtonLink({
+    to,
+    text,
+    className = '',
+    onClick = undefined,
+    icon = undefined,
+}: ButtonLink) {
     return (
         <Link
             to={to}
@@ -9,7 +15,8 @@ export default function ButtonLink({ to, text , className="", onClick = undefine
             className={className}
             aria-current="page"
         >
-            {text}
+            {icon && icon}
+            <span>{text}</span>
         </Link>
     );
 }

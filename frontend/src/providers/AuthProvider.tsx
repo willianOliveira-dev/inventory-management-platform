@@ -18,9 +18,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         try {
-            const {
-                data: { ...user },
-            } = await api.get<User>('/panel/v1/auth/me');
+            const response = await api.get('/auth/me');
+            const user = response.data.data;
             setUser(user);
         } catch (error: unknown) {
             TokenStorage.clearToken();

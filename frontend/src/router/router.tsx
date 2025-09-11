@@ -2,9 +2,13 @@ import Login from '../pages/Login';
 import ProtectedRoute from '../components/common/ProtectedRoute';
 import Register from '../pages/Register';
 import Dashboard from '../pages/Dashboard';
+import Product from '../pages/Product';
 import Home from '../pages/Home';
-import { createBrowserRouter } from 'react-router-dom';
 import Products from '../pages/Products';
+import AddProduct from '../pages/AddProduct';
+import productLoader from '../loaders/productLoader';
+import { createBrowserRouter } from 'react-router-dom';
+import ProductBoundary from '../errors/ProductBoundary';
 
 const router = createBrowserRouter([
     {
@@ -22,6 +26,14 @@ const router = createBrowserRouter([
             {
                 path: 'products',
                 element: <Products />,
+            },
+
+            { path: 'products/new', element: <AddProduct /> },
+            {
+                path: 'products/:itemId',
+                element: <Product />,
+                loader: productLoader,
+                errorElement: <ProductBoundary/>
             },
         ],
     },

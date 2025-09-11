@@ -16,10 +16,9 @@ api.interceptors.request.use(
     // interceptar todas as requisições  HTTP para o Servidor
     (config) => {
         // Função que roda antes da requisição
-        if (TokenStorage.hasToken()) {
-            //
-            const token: string | null = TokenStorage.getToken();
-            config.headers.Authorization = `Bearer ${token}`; // adiciona no cabeçalho
+        const token: string | null = TokenStorage.getToken();
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`; // adiciona no cabeçalho
         }
         return config; // Continuar a requisição
     },
@@ -28,11 +27,12 @@ api.interceptors.request.use(
     }
 );
 
-// interceptando a resposta antes de chegar ao cliente 
+// interceptando a resposta antes de chegar ao cliente
 api.interceptors.response.use(
     (response) => response, // Se deu tudo certo, apenas devolve a resposta
-    async (error: AxiosError) => { // Função de reparo, caso haja error de 403 ou outros
-       const originalRequest = error.config;
+    async (error: AxiosError) => {
+        // Função de reparo, caso haja error de 403 ou outros
+        const originalRequest = error.config;
         if (error.response?.status === 403 && !originalRequest?._retry) {
             originalRequest!._retry = true;
             try {
@@ -42,10 +42,9 @@ api.interceptors.response.use(
                 TokenStorage.setToken(newAccessToken);
 
                 originalRequest!.headers.Authorization = `Bearer ${newAccessToken}`;
-                
-                return api(originalRequest as AxiosRequestConfig);
 
-            } catch(refreshError) {
+                return api(originalRequest as AxiosRequestConfig);
+            } catch (refreshError) {
                 TokenStorage.clearToken();
                 return Promise.reject(refreshError);
             }
