@@ -1,14 +1,14 @@
 import ButtonLink from '../components/ui/ButtonLink';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import itemApi from '../api/itemApi';
+import { useCategories } from '../hooks/useCategories';
+import { useItems } from '../hooks/useItems';
 import { useNavigate } from 'react-router-dom';
 import { useState, type FormEvent } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
-import { useCategories } from '../hooks/useCategories';
 import { FaBoxOpen, FaHashtag, FaDollarSign, FaSave } from 'react-icons/fa';
 import { LuLetterText } from 'react-icons/lu';
 import { IoPricetagsOutline } from 'react-icons/io5';
-import { useItems } from '../hooks/useItems';
 import type { Item, ErrorResponse } from '../types';
 
 export default function AddProduct() {

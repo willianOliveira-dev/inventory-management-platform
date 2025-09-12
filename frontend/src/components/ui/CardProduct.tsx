@@ -16,7 +16,7 @@ export default function CardProduct({
 
     return (
         <div
-            className={`flex flex-col justify-between items-start rounded-md shadow-md p-3 ring ring-gray-200 ${quantity >= quantityLimit ?  "bg-stone-900 ": "bg-red-800"}   `}
+            className={`flex flex-col justify-between items-start rounded-md shadow-md p-3 ring ring-gray-200 ${quantity >= quantityLimit ?  "bg-stone-900 hover:bg-stone-800 ": "bg-red-800 hover:bg-red-700"} transition-colors duration-200  `}
         >
             <div className="w-full space-y-2">
                 <h3 className="font-semibold text-white">{nameProduct}</h3>

@@ -11,6 +11,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import ProductBoundary from '../errors/ProductBoundary';
 import EditProduct from '../pages/EditProduct';
 import Page404 from '../pages/Page404';
+import Categories from '../pages/Categories';
 
 const router = createBrowserRouter([
     {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
                 element: <EditProduct />,
                 loader: productLoader,
                 errorElement: <ProductBoundary />,
+            },
+            {
+                path: 'categories',
+                element: <Categories />,
             },
         ],
     },
