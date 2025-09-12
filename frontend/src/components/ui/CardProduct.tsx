@@ -1,26 +1,31 @@
-import { type CardProduct } from '../../types';
+import CategoryBadgeColored from './CategoryBadgeColored';
+import ButtonLink from '../ui/ButtonLink';
+import { useItems } from '../../hooks/useItems';
 import { FaEye, FaPen } from 'react-icons/fa';
+import { type CardProduct } from '../../types';
 
 export default function CardProduct({
+    itemId,
     nameProduct,
-    category,
+    categoryId,
     quantity,
     price,
-    className = '',
 }: CardProduct) {
-   
+    const { categoryIdsMap } = useItems();
+    const quantityLimit: number = 10;
+
     return (
         <div
-            className={`flex flex-col justify-between items-start rounded-md shadow-md p-3 bg-stone-900  ring ring-gray-200 ${className}`}
+            className={`flex flex-col justify-between items-start rounded-md shadow-md p-3 ring ring-gray-200 ${quantity >= quantityLimit ?  "bg-stone-900 ": "bg-red-800"}   `}
         >
             <div className="w-full space-y-2">
                 <h3 className="font-semibold text-white">{nameProduct}</h3>
                 <div className="flex gap-2 items-center flex-1 min-w-0 flex-wrap">
-                    <span className="text-xs text-center py-1 px-2 rounded-full text-blue-700 bg-blue-100">
-                        {category}
-                    </span>
-                    <span className="text-xs text-center py-1 px-2 rounded-full text-gray-300 ">
-                        Qtd: {quantity}
+                    <CategoryBadgeColored
+                        category={categoryIdsMap[categoryId]}
+                    />
+                    <span className={`text-xs text-center py-1 px-2 rounded-full text-gray-300 ${quantity < quantityLimit && "bg-red-400"}`}>
+                       { quantity >= quantityLimit ? `Qtd: ${quantity}` : `${quantity} remaining`}
                     </span>
                 </div>
                 <div className="flex justify-between items-center w-full mt-2">
@@ -28,12 +33,16 @@ export default function CardProduct({
                         {price}
                     </span>
                     <div className="flex items-center gap-2">
-                        <button className="hover:bg-blue-200 p-2 rounded-md cursor-pointer transition-colors">
-                            <FaPen className="text-gray-600 text-sm" />
-                        </button>
-                        <button className="hover:bg-blue-200 p-2 rounded-md cursor-pointer transition-colors">
-                            <FaEye className="text-gray-600 text-sm" />
-                        </button>
+                        <ButtonLink
+                            to={`/products/${itemId}/edit`}
+                            className="flex items-center justify-center hover:bg-stone-600 p-2 rounded-md transition-colors"
+                            icon={<FaPen className="text-gray-200 text-sm" />}
+                        />
+                        <ButtonLink
+                            to={`/products/${itemId}`}
+                            icon={<FaEye className="text-gray-200 text-sm" />}
+                            className="flex items-center justify-center hover:bg-stone-600 p-2 rounded-md transition-colors"
+                        />
                     </div>
                 </div>
             </div>

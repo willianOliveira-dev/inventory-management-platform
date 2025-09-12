@@ -3,22 +3,30 @@ import CategoryBadgeColored from '../components/ui/CategoryBadgeColored';
 import formatPrice from '../utils/formatPrice';
 import formatDate from '../utils/formatDate';
 import ButtonLink from '../components/ui/ButtonLink';
+import removeItem from '../utils/removeItem';
+import PopUpConfirmation from '../components/ui/PopUpConfirmation';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import { useItems } from '../hooks/useItems';
+import { useCategories } from '../hooks/useCategories';
+import { useNavigate } from 'react-router-dom';
+import { useMemo, useState } from 'react';
 import { IoTrashBinOutline } from 'react-icons/io5';
 import { IoMdAdd } from 'react-icons/io';
 import { IoSearch } from 'react-icons/io5';
 import { FaBoxOpen, FaEye, FaPen } from 'react-icons/fa';
 import { BsBoxSeam } from 'react-icons/bs';
-import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useItems } from '../hooks/useItems';
-import { useCategories } from '../hooks/useCategories';
+import { type Item } from '../types';
 
 export default function Products() {
+    const [showPopUp, setShowPopUp] = useState<boolean>(false);
+    const [selectProduct, setSelectProduct] = useState<
+        Pick<Item, 'item_id' | 'name'>
+    >({ item_id: '', name: '' });
     const [search, setSearch] = useState<string>('');
-    const { items, categoryIds, isLoading } = useItems();
+    const { items, categoryIdsMap, isLoading, removeItemFromState } =
+        useItems();
     const categoriesFilter = useCategories();
-
+    const navigate = useNavigate();
     const productsFilter = useMemo(() => {
         return items.filter((item) => {
             const nameMatch: boolean = item.name
@@ -29,12 +37,12 @@ export default function Products() {
                 categoriesFilter.categorySelect === 'All Categories' ||
                 (categoriesFilter.categorySelect == 'Low Stock' &&
                     item.current_quantity < 10) ||
-                categoryIds[item.category_id] ===
+                categoryIdsMap[item.category_id] ===
                     categoriesFilter.categorySelect;
 
             return nameMatch && categoryMatch;
         });
-    }, [search, items, categoryIds, categoriesFilter.categorySelect]);
+    }, [search, items, categoryIdsMap, categoriesFilter.categorySelect]);
 
     return (
         <section className="flex flex-col gap-6 p-4 md:p-6">
@@ -48,7 +56,7 @@ export default function Products() {
                     </p>
                 </div>
                 <ButtonLink
-                    className='flex gap-2 items-center text-white p-2 md:p-3 rounded-md cursor-pointer bg-sky-500 hover:bg-sky-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-gray-900'
+                    className="flex gap-2 items-center text-white p-2 md:p-3 rounded-md cursor-pointer bg-sky-500 hover:bg-sky-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-gray-900"
                     to="/products/new"
                     text="Add Product"
                     icon={<IoMdAdd />}
@@ -138,7 +146,7 @@ export default function Products() {
                                                 <td className="px-4 py-3 whitespace-nowrap">
                                                     <CategoryBadgeColored
                                                         category={
-                                                            categoryIds[
+                                                            categoryIdsMap[
                                                                 category_id
                                                             ]
                                                         }
@@ -164,19 +172,35 @@ export default function Products() {
                                                 </td>
                                                 <td className="px-4 py-3 text-center whitespace-nowrap">
                                                     <div className="flex justify-center gap-2">
-                                                        <Link
+                                                        <ButtonLink
                                                             to={`/products/${item_id}`}
+                                                            icon={
+                                                                <FaEye className="text-gray-200 text-sm" />
+                                                            }
                                                             className="flex items-center justify-center hover:bg-stone-600 p-2 rounded-md transition-colors"
-                                                        >
-                                                            <FaEye className="text-gray-200 text-sm" />
-                                                        </Link>
-                                                        <Link
+                                                        />
+                                                        <ButtonLink
                                                             to={`/products/${item_id}/edit`}
                                                             className="flex items-center justify-center hover:bg-stone-600 p-2 rounded-md transition-colors"
+                                                            icon={
+                                                                <FaPen className="text-gray-200 text-sm" />
+                                                            }
+                                                        />
+                                                        <button
+                                                            onClick={() => {
+                                                                setShowPopUp(
+                                                                    (current) =>
+                                                                        !current
+                                                                );
+                                                                setSelectProduct(
+                                                                    {
+                                                                        item_id,
+                                                                        name,
+                                                                    }
+                                                                );
+                                                            }}
+                                                            className="flex items-center justify-center hover:bg-red-800 p-2 rounded-md transition-colors cursor-pointer"
                                                         >
-                                                            <FaPen className="text-gray-200 text-sm" />
-                                                        </Link>
-                                                        <button className="flex items-center justify-center hover:bg-red-800 p-2 rounded-md transition-colors cursor-pointer">
                                                             <IoTrashBinOutline className="text-red-400 text-sm" />
                                                         </button>
                                                     </div>
@@ -198,7 +222,7 @@ export default function Products() {
                                 product.
                             </p>
                             <ButtonLink
-                                className='flex gap-2 items-center text-white p-2 md:p-3 rounded-md cursor-pointer bg-sky-500 hover:bg-sky-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-gray-900'
+                                className="flex gap-2 items-center text-white p-2 md:p-3 rounded-md cursor-pointer bg-sky-500 hover:bg-sky-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-gray-900"
                                 to="/products/new"
                                 text="Add Product"
                                 icon={<IoMdAdd />}
@@ -207,6 +231,19 @@ export default function Products() {
                     )}
                 </div>
             </div>
+            {showPopUp && (
+                <PopUpConfirmation
+                    setShowPopUp={setShowPopUp}
+                    message={`Are you sure you want to remove "${selectProduct.name}" from stock? This action cannot be undone.`}
+                    onConfirm={() => {
+                        removeItem(selectProduct.item_id!);
+                        removeItemFromState(selectProduct.item_id!);
+                        navigate('/products');
+                        setShowPopUp(false);
+                    }}
+                />
+            )}
+            
         </section>
     );
 }

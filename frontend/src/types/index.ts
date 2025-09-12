@@ -15,3 +15,5 @@ export * from './entities/category';
 export * from './response/itemResponse';
 export * from './contexts/categoryContextType';
 export * from './contexts/itemContextType';
+export * from './error/erroResponse';
+export * from './props/popUpConfirmation';

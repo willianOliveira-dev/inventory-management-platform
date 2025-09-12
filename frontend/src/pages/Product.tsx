@@ -1,10 +1,12 @@
 import ButtonLink from '../components/ui/ButtonLink';
 import CategoryBadgeColored from '../components/ui/CategoryBadgeColored';
-import formatDateTime from '../utils/format';
+import formatDateTime from '../utils/formatDateTime';
 import formatPrice from '../utils/formatPrice';
+import PopUpConfirmation from '../components/ui/PopUpConfirmation';
+import removeItem from '../utils/removeItem';
 import { useItems } from '../hooks/useItems';
-import { useMemo } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa6';
 import {
     FaBoxOpen,
@@ -21,6 +23,8 @@ import { FiAlertTriangle } from 'react-icons/fi';
 import { type Item } from '../types';
 
 export default function Product() {
+    const [showPopUp, setShowPopUp] = useState<boolean>(false);
+
     const {
         item_id,
         category_id,
@@ -32,8 +36,8 @@ export default function Product() {
         updated_at,
     } = useLoaderData<Item>();
 
-    const { categoryIds } = useItems();
-
+    const { categoryIdsMap, removeItemFromState } = useItems();
+    const navigate = useNavigate();
     const hasStock: boolean = useMemo(() => {
         return current_quantity > 0;
     }, [current_quantity]);
@@ -70,12 +74,14 @@ export default function Product() {
                         text="Edit"
                         icon={<FaEdit />}
                     />
-                    <button className="flex gap-4 items-center text-white p-2 md:p-3 rounded-md cursor-pointer bg-red-500 hover:bg-red-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 focus:ring-offset-gray-900">
+                    <button
+                        onClick={() => setShowPopUp(true)}
+                        className="flex gap-4 items-center text-white p-2 md:p-3 rounded-md cursor-pointer bg-red-500 hover:bg-red-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 focus:ring-offset-gray-900"
+                    >
                         <IoTrashBinOutline /> <span>Remove</span>
                     </button>
                 </div>
             </header>
-
             <div className="flex flex-col lg:flex-row gap-6 w-full px-5">
                 <div className="w-full lg:w-2/3 space-y-4 p-4 ring ring-gray-700/40 rounded-md">
                     <h2 className="flex items-center gap-2 text-xl text-violet-400">
@@ -123,7 +129,7 @@ export default function Product() {
                                 <span>Category</span>
                             </div>
                             <CategoryBadgeColored
-                                category={categoryIds[category_id]}
+                                category={categoryIdsMap[category_id]}
                             />
                         </div>
                         <div className="space-y-2 p-2">
@@ -224,6 +230,19 @@ export default function Product() {
                     </div>
                 </div>
             </div>
+
+            {showPopUp && (
+                <PopUpConfirmation
+                    setShowPopUp={setShowPopUp}
+                    message={`Are you sure you want to remove "${name}" from stock? This action cannot be undone.`}
+                    onConfirm={() => {
+                        removeItem(item_id!);
+                        removeItemFromState(item_id!);
+                        setShowPopUp(false);
+                        navigate('/products');
+                    }}
+                />
+            )}
         </section>
     );
 }

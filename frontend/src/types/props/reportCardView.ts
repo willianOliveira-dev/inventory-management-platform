@@ -1,8 +1,8 @@
 import { type JSX } from 'react';
 
-export interface ReportCardView {
+export interface ReportCardView <T>{
     label: string;
-    data: string;
+    data: T;
     description: string;
     icon: JSX.Element;
 }

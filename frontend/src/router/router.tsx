@@ -9,6 +9,8 @@ import AddProduct from '../pages/AddProduct';
 import productLoader from '../loaders/productLoader';
 import { createBrowserRouter } from 'react-router-dom';
 import ProductBoundary from '../errors/ProductBoundary';
+import EditProduct from '../pages/EditProduct';
+import Page404 from '../pages/Page404';
 
 const router = createBrowserRouter([
     {
@@ -26,14 +28,23 @@ const router = createBrowserRouter([
             {
                 path: 'products',
                 element: <Products />,
+                errorElement: <ProductBoundary />,
             },
-
-            { path: 'products/new', element: <AddProduct /> },
+            {
+                path: 'products/new',
+                element: <AddProduct />,
+            },
             {
                 path: 'products/:itemId',
                 element: <Product />,
                 loader: productLoader,
-                errorElement: <ProductBoundary/>
+                errorElement: <ProductBoundary />,
+            },
+            {
+                path: 'products/:itemId/edit',
+                element: <EditProduct />,
+                loader: productLoader,
+                errorElement: <ProductBoundary />,
             },
         ],
     },

@@ -1,6 +1,7 @@
 import ButtonLink from '../components/ui/ButtonLink';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import itemApi from '../api/itemApi';
+import { useLoaderData } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useState, type FormEvent } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
@@ -9,21 +10,23 @@ import { FaBoxOpen, FaHashtag, FaDollarSign, FaSave } from 'react-icons/fa';
 import { LuLetterText } from 'react-icons/lu';
 import { IoPricetagsOutline } from 'react-icons/io5';
 import { useItems } from '../hooks/useItems';
-import type { Item, ErrorResponse } from '../types';
+import type {  Item , ErrorResponse} from '../types';
 
-export default function AddProduct() {
-    const [nameItem, setNameItem] = useState<string>('');
-    const [quantity, setQuantity] = useState<string>('');
-    const [error, setError] = useState<ErrorResponse>({ code: '',message: [], });
-    const [price, setPrice] = useState<string>('');
-    const [categoryName, setCategoryName] =
-        useState<string>('Select a category');
+export default function EditProduct() {
+    const { categoryInfo, categories } = useCategories();
+    const { items, categoryIdsMap, setItems } = useItems();
+    const { item_id, name, category_id, current_quantity, price_cents, description } =
+        useLoaderData<Item>();
+    const [nameItem, setNameItem] = useState<string>(name);
+    const [quantity, setQuantity] = useState<string>(String(current_quantity));
+    const [error, setError] = useState<ErrorResponse>({ code: '', message: [] });
+    const [price, setPrice] = useState<string>(String(price_cents / 100));
+    const [categoryName, setCategoryName] = useState<string>(categoryIdsMap[category_id]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [description, setDescription] = useState<string>('');
+    const [descriptionForm, setDescriptionForm] = useState<string>(description);
     const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
     const [limitDescription, setLimitDescription] = useState<number>(500);
-    const { categoryInfo, categories } = useCategories();
-    const { setItems } = useItems();
+    
 
     const findError = (field: string): boolean => {
         return error.message.some((object) => object.field === field);
@@ -45,23 +48,41 @@ export default function AddProduct() {
         e.preventDefault();
         setIsSubmitted(true);
 
-        if (!nameItem || !quantity || !price || !categoryName || !description)
+        if (
+            !nameItem ||
+            !quantity ||
+            !price ||
+            !categoryName ||
+            !descriptionForm
+        )
             return;
 
         setIsLoading(true);
 
         try {
+
             const newItem = {
                 name: nameItem,
                 category_id: categoryInfo[categoryName] as string,
                 current_quantity: +quantity,
                 price_cents: +price * 100,
-                description,
+                description: descriptionForm,
             };
 
-            const itemCreated: Item = await itemApi.createItem(newItem);
-            setItems((prev) => [itemCreated, ...prev]);
-            navigate(`/products/${itemCreated.item_id}`);
+            const updatedItem: Item = await itemApi.updateItem(
+                newItem,
+                item_id!
+            );
+
+            const newItems = items.map((item) => {
+                if (item.item_id! === item_id!) {
+                    return updatedItem;
+                }
+                return item;
+            });
+
+            setItems(newItems as Item[]);
+            navigate(`/products/${updatedItem.item_id}`);
         } catch (error: any) {
             setError({
                 code: error.response.data.code,
@@ -85,10 +106,10 @@ export default function AddProduct() {
                 </div>
                 <div className="space-y-1">
                     <h1 className="text-indigo-500 text-4xl lg:text-5xl font-bold tracking-tighter">
-                        New Product
+                        Edit Product
                     </h1>
                     <p className="text-white text-sm md:text-base">
-                        Add a new product to your inventory
+                        Update product information
                     </p>
                 </div>
             </header>
@@ -273,6 +294,7 @@ export default function AddProduct() {
                             </label>
                             <select
                                 id="category-options"
+                                defaultValue={categoryName}
                                 onChange={(e) =>
                                     setCategoryName(e.target.value)
                                 }
@@ -280,7 +302,7 @@ export default function AddProduct() {
                                     rounded-lg focus:outline-none focus:ring-2 shadow-[0_0_15px_0_rgba(0,0,0, 90)]"
                                 required
                             >
-                                <option selected disabled value="">
+                                <option disabled value="">
                                     Select a category
                                 </option>
 
@@ -293,9 +315,6 @@ export default function AddProduct() {
                             <div className="flex flex-col gap-2">
                                 <span className="text-xs text-gray-400">
                                     Select product category
-                                </span>
-                                <span className="text-gray-400 text-[11.5px]">
-                                    Didn't find a category? Create one!
                                 </span>
                                 {isSubmitted && !categoryName && (
                                     <span className="text-red-400 text-xs mt-1 block">
@@ -321,7 +340,7 @@ export default function AddProduct() {
                             <div className="relative">
                                 <textarea
                                     id="description"
-                                    value={description}
+                                    value={descriptionForm}
                                     rows={5}
                                     style={{
                                         scrollbarWidth: 'none',
@@ -340,7 +359,7 @@ export default function AddProduct() {
                                             value = value.slice(0, 500);
                                         }
 
-                                        setDescription(value);
+                                        setDescriptionForm(value);
                                         clearFieldError('description');
                                         setLimitDescription(500 - value.length);
                                     }}
@@ -366,7 +385,7 @@ export default function AddProduct() {
                                         Add a detailed product description
                                     </span>
                                 )}
-                                {isSubmitted && !description && (
+                                {isSubmitted && !descriptionForm && (
                                     <span className="text-red-400 text-xs mt-1 block">
                                         Description is required
                                     </span>
@@ -389,11 +408,11 @@ export default function AddProduct() {
                                 {isLoading ? (
                                     <>
                                         <LoadingSpinner size="sm" />
-                                        Saving...
+                                        Updating...
                                     </>
                                 ) : (
                                     <>
-                                        <FaSave /> <span>Add Product</span>
+                                        <FaSave /> <span>Update Product</span>
                                     </>
                                 )}
                             </span>

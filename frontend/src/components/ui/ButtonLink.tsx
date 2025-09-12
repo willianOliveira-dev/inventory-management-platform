@@ -3,7 +3,7 @@ import { type ButtonLink } from '../../types';
 
 export default function ButtonLink({
     to,
-    text,
+    text = '',
     className = '',
     onClick = undefined,
     icon = undefined,
