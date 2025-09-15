@@ -113,7 +113,7 @@ export default class CategoryService {
 
             if (exists) {
                 throw new ValidationError(
-                    `The category "${name}" already exists. The creation has been canceled.`,
+                    `Category "${name}" already exists`,
                     CategoryResponseCode.CATEGORY_ALREADY_EXISTS
                 );
             }
