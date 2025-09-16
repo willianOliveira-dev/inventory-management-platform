@@ -4,6 +4,7 @@ import formatDateTime from '../utils/formatDateTime';
 import formatPrice from '../utils/formatPrice';
 import PopUpConfirmation from '../components/ui/PopUpConfirmation';
 import removeItem from '../utils/removeItem';
+import { useCategories } from '../hooks/useCategories';
 import { useItems } from '../hooks/useItems';
 import { useMemo, useState } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
@@ -21,7 +22,7 @@ import { RiHistoryFill } from 'react-icons/ri';
 import { LuLetterText } from 'react-icons/lu';
 import { FiAlertTriangle } from 'react-icons/fi';
 import { type Item } from '../types';
-import { useCategories } from '../hooks/useCategories';
+
 
 export default function Product() {
     const [showPopUp, setShowPopUp] = useState<boolean>(false);

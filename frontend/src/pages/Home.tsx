@@ -175,7 +175,7 @@ export default function Home() {
                     <div className="grid grid-cols-4 gap-4 w-full max-lg:grid-cols-2 max-sm:grid-cols-1">
                         <ReportCardView
                             label="Total Products"
-                            data={items.length}
+                            data={String(items.length)}
                             description="Different types of products"
                             icon={
                                 <FaBoxOpen className="size-full p-[5px] bg-purple-500 rounded-full" />
@@ -183,7 +183,7 @@ export default function Home() {
                         />
                         <ReportCardView
                             label="Total Items"
-                            data={totalItems}
+                            data={String(totalItems)}
                             description="Total data in stock"
                             icon={
                                 <LuChartNoAxesCombined className="size-full  p-[5px] bg-green-400 rounded-full" />
@@ -191,7 +191,7 @@ export default function Home() {
                         />
                         <ReportCardView
                             label={`Added (${days} days)`}
-                            data={dayCount}
+                            data={String(dayCount)}
                             description="Newly added products"
                             icon={
                                 <IoCalendarNumberOutline className="size-full p-[5px] bg-blue-400 rounded-full" />
@@ -199,7 +199,7 @@ export default function Home() {
                         />
                         <ReportCardView
                             label="Low Stock"
-                            data={lowStock}
+                            data={String(lowStock)}
                             description="Products with less than 10 units"
                             icon={
                                 <FiAlertTriangle className="size-full p-[5px] bg-red-400 rounded-full" />

@@ -1,7 +1,7 @@
 import { type ReportCardView } from '../../types';
 
 
-export default function ReportCardView({ label, data, description, icon }: ReportCardView<number>) {
+export default function ReportCardView({ label, data, description, icon }: ReportCardView<string>) {
     return (
         <div className="flex justify-between items-center w-full  z-10 text-white p-4 bg-stone-950 shadow-[0_0_15px_0_rgba(0,0,0,1)] hover:scale-101 duration-300 ease-in rounded-2xl ">
             <div className="flex flex-col gap-1/2 p-2">

@@ -1,13 +1,13 @@
 import Page404 from '../pages/Page404';
 import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
-export default function ProductBoundary() {
+export default function ErrorBoundary() {
     const error = useRouteError();
     if (isRouteErrorResponse(error)) {
         switch (error.status) {
             case 404:
                 return (
                     <Page404
-                        message="Oops! Product not Found"
+                        message="Oops! Page not Found"
                         error={error.data}
                     />
                 );

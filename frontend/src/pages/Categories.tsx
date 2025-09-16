@@ -20,7 +20,6 @@ export default function Categories() {
             items.forEach(({ category_id }) => {
                 const categoryName = categoryIdsMap[category_id];
                 if (categoryName) {
-                    console.log(categoryName);
                     record[categoryName] = (record[categoryName] || 0) + 1;
                 }
             });

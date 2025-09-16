@@ -7,13 +7,14 @@ import Home from '../pages/Home';
 import Products from '../pages/Products';
 import AddProduct from '../pages/AddProduct';
 import productLoader from '../loaders/productLoader';
-import ProductBoundary from '../errors/ProductBoundary';
+import ErrorBoundary from '../errors/ErrorBoundary';
 import EditProduct from '../pages/EditProduct';
 import Categories from '../pages/Categories';
 import AddCategory from '../pages/addCategory';
 import EditCategory from '../pages/EditCategory';
 import categoryLoader from '../loaders/categoryLoader';
 import { createBrowserRouter } from 'react-router-dom';
+import Reports from '../pages/Reports';
 
 const router = createBrowserRouter([
     {
@@ -31,7 +32,6 @@ const router = createBrowserRouter([
             {
                 path: 'products',
                 element: <Products />,
-                errorElement: <ProductBoundary />,
             },
             {
                 path: 'products/new',
@@ -41,13 +41,13 @@ const router = createBrowserRouter([
                 path: 'products/:itemId',
                 element: <Product />,
                 loader: productLoader,
-                errorElement: <ProductBoundary />,
+                errorElement: <ErrorBoundary />,
             },
             {
                 path: 'products/:itemId/edit',
                 element: <EditProduct />,
                 loader: productLoader,
-                errorElement: <ProductBoundary />,
+                errorElement: <ErrorBoundary />,
             },
             {
                 path: 'categories',
@@ -61,7 +61,9 @@ const router = createBrowserRouter([
                 path: 'categories/:categoryId/edit',
                 loader: categoryLoader,
                 element: <EditCategory />,
+                errorElement: <ErrorBoundary />,
             },
+            { path: 'reports', element: <Reports /> },
         ],
     },
     {
