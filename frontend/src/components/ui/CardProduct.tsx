@@ -1,8 +1,8 @@
 import CategoryBadgeColored from './CategoryBadgeColored';
 import ButtonLink from '../ui/ButtonLink';
-import { useItems } from '../../hooks/useItems';
 import { FaEye, FaPen } from 'react-icons/fa';
 import { type CardProduct } from '../../types';
+import { useCategories } from '../../hooks/useCategories';
 
 export default function CardProduct({
     itemId,
@@ -11,12 +11,16 @@ export default function CardProduct({
     quantity,
     price,
 }: CardProduct) {
-    const { categoryIdsMap } = useItems();
+    const { categoryIdsMap } = useCategories();
     const quantityLimit: number = 10;
 
     return (
         <div
-            className={`flex flex-col justify-between items-start rounded-md shadow-md p-3 ring ring-gray-200 ${quantity >= quantityLimit ?  "bg-stone-900 hover:bg-stone-800 ": "bg-red-800 hover:bg-red-700"} transition-colors duration-200  `}
+            className={`flex flex-col justify-between items-start rounded-md shadow-md p-3 ring ring-gray-200 ${
+                quantity >= quantityLimit
+                    ? 'bg-stone-900 hover:bg-stone-800 '
+                    : 'bg-red-800 hover:bg-red-700'
+            } transition-colors duration-200  `}
         >
             <div className="w-full space-y-2">
                 <h3 className="font-semibold text-white">{nameProduct}</h3>
@@ -24,8 +28,14 @@ export default function CardProduct({
                     <CategoryBadgeColored
                         category={categoryIdsMap[categoryId]}
                     />
-                    <span className={`text-xs text-center py-1 px-2 rounded-full text-gray-300 ${quantity < quantityLimit && "bg-red-400"}`}>
-                       { quantity >= quantityLimit ? `Qtd: ${quantity}` : `${quantity} remaining`}
+                    <span
+                        className={`text-xs text-center py-1 px-2 rounded-full text-gray-300 ${
+                            quantity < quantityLimit && 'bg-red-400'
+                        }`}
+                    >
+                        {quantity >= quantityLimit
+                            ? `Qtd: ${quantity}`
+                            : `${quantity} remaining`}
                     </span>
                 </div>
                 <div className="flex justify-between items-center w-full mt-2">

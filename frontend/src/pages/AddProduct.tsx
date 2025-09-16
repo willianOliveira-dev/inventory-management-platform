@@ -9,20 +9,19 @@ import { FaArrowLeft } from 'react-icons/fa6';
 import { FaBoxOpen, FaHashtag, FaDollarSign, FaSave } from 'react-icons/fa';
 import { LuLetterText } from 'react-icons/lu';
 import { IoPricetagsOutline } from 'react-icons/io5';
-import type { Item, ErrorResponse } from '../types';
+import { type Item } from '../types';
 
 export default function AddProduct() {
     const [nameItem, setNameItem] = useState<string>('');
     const [quantity, setQuantity] = useState<string>('');
-    const [error, setError] = useState<ErrorResponse>({ code: '',message: [], });
+    const [error, setError] = useState<{ code: string; message: { field: string; message: string; code: string }[]; }>({ code: '', message: [] });
     const [price, setPrice] = useState<string>('');
-    const [categoryName, setCategoryName] =
-        useState<string>('Select a category');
+    const [categoryName, setCategoryName] = useState<string>('Select a category');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [description, setDescription] = useState<string>('');
     const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
     const [limitDescription, setLimitDescription] = useState<number>(500);
-    const { categoryInfo, categories } = useCategories();
+    const { categoryNamesMap, categoryList } = useCategories();
     const { setItems } = useItems();
 
     const findError = (field: string): boolean => {
@@ -43,6 +42,7 @@ export default function AddProduct() {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        setError({ code: '', message: [] });
         setIsSubmitted(true);
 
         if (!nameItem || !quantity || !price || !categoryName || !description)
@@ -53,7 +53,7 @@ export default function AddProduct() {
         try {
             const newItem = {
                 name: nameItem,
-                category_id: categoryInfo[categoryName] as string,
+                category_id: categoryNamesMap[categoryName] as string,
                 current_quantity: +quantity,
                 price_cents: +price * 100,
                 description,
@@ -284,7 +284,7 @@ export default function AddProduct() {
                                     Select a category
                                 </option>
 
-                                {categories.slice(2).map((category, idx) => (
+                                {categoryList.slice(2).map((category, idx) => (
                                     <option key={idx} value={category}>
                                         {category}
                                     </option>

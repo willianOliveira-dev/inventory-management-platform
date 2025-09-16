@@ -21,23 +21,15 @@ import { RiHistoryFill } from 'react-icons/ri';
 import { LuLetterText } from 'react-icons/lu';
 import { FiAlertTriangle } from 'react-icons/fi';
 import { type Item } from '../types';
+import { useCategories } from '../hooks/useCategories';
 
 export default function Product() {
     const [showPopUp, setShowPopUp] = useState<boolean>(false);
-
-    const {
-        item_id,
-        category_id,
-        name,
-        current_quantity,
-        price_cents,
-        description,
-        created_at,
-        updated_at,
-    } = useLoaderData<Item>();
-
-    const { categoryIdsMap, removeItemFromState } = useItems();
+    const { item_id, category_id, name, current_quantity, price_cents, description, created_at,updated_at,} = useLoaderData<Item>();
+    const { categoryIdsMap } = useCategories();
+    const { removeItemFromState } = useItems();
     const navigate = useNavigate();
+
     const hasStock: boolean = useMemo(() => {
         return current_quantity > 0;
     }, [current_quantity]);

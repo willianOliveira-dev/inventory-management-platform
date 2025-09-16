@@ -10,23 +10,33 @@ import { FaBoxOpen, FaHashtag, FaDollarSign, FaSave } from 'react-icons/fa';
 import { LuLetterText } from 'react-icons/lu';
 import { IoPricetagsOutline } from 'react-icons/io5';
 import { useItems } from '../hooks/useItems';
-import type {  Item , ErrorResponse} from '../types';
+import { type Item } from '../types';
 
 export default function EditProduct() {
-    const { categoryInfo, categories } = useCategories();
-    const { items, categoryIdsMap, setItems } = useItems();
-    const { item_id, name, category_id, current_quantity, price_cents, description } =
-        useLoaderData<Item>();
+    const { categoryNamesMap, categoryList, categoryIdsMap } = useCategories();
+    const { items, setItems } = useItems();
+    const {
+        item_id,
+        name,
+        category_id,
+        current_quantity,
+        price_cents,
+        description,
+    } = useLoaderData<Item>();
     const [nameItem, setNameItem] = useState<string>(name);
     const [quantity, setQuantity] = useState<string>(String(current_quantity));
-    const [error, setError] = useState<ErrorResponse>({ code: '', message: [] });
+    const [error, setError] = useState<{
+        code: string;
+        message: { field: string; message: string; code: string }[];
+    }>({ code: '', message: [] });
     const [price, setPrice] = useState<string>(String(price_cents / 100));
-    const [categoryName, setCategoryName] = useState<string>(categoryIdsMap[category_id]);
+    const [categoryName, setCategoryName] = useState<string>(
+        categoryIdsMap[category_id]
+    );
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [descriptionForm, setDescriptionForm] = useState<string>(description);
     const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
     const [limitDescription, setLimitDescription] = useState<number>(500);
-    
 
     const findError = (field: string): boolean => {
         return error.message.some((object) => object.field === field);
@@ -46,6 +56,7 @@ export default function EditProduct() {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        setError({ code: '', message: [] });
         setIsSubmitted(true);
 
         if (
@@ -60,10 +71,9 @@ export default function EditProduct() {
         setIsLoading(true);
 
         try {
-
             const newItem = {
                 name: nameItem,
-                category_id: categoryInfo[categoryName] as string,
+                category_id: categoryNamesMap[categoryName] as string,
                 current_quantity: +quantity,
                 price_cents: +price * 100,
                 description: descriptionForm,
@@ -74,14 +84,15 @@ export default function EditProduct() {
                 item_id!
             );
 
-            const newItems = items.map((item) => {
+            const updatedItems = items.map((item) => {
                 if (item.item_id! === item_id!) {
                     return updatedItem;
                 }
                 return item;
             });
 
-            setItems(newItems as Item[]);
+            setItems(updatedItems);
+
             navigate(`/products/${updatedItem.item_id}`);
         } catch (error: any) {
             setError({
@@ -306,7 +317,7 @@ export default function EditProduct() {
                                     Select a category
                                 </option>
 
-                                {categories.slice(2).map((category, idx) => (
+                                {categoryList.slice(2).map((category, idx) => (
                                     <option key={idx} value={category}>
                                         {category}
                                     </option>

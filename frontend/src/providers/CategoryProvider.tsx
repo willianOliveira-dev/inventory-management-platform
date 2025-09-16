@@ -1,6 +1,6 @@
 import CategoryContext from '../contexts/categoryContext';
 import categoryApi from '../api/categoryApi';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { type Category } from '../types/entities/category';
 import { type ReactNode } from 'react';
 
@@ -9,50 +9,63 @@ export default function CategoryProvider({
 }: {
     children: ReactNode;
 }) {
-    const [categories, setCategories] = useState<string[]>([
-        'All Categories',
-        'Low Stock',
-    ]);
-    const [categoryInfo, setCategoryInfo] = useState<{
-        [categoryName: string]: string;
-    }>({});
-    const [categorySelect, setCategorySelect] =
-        useState<string>('All Categories');
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [categorySelect, setCategorySelect] = useState<string>('All Categories');
     const [active, setActive] = useState<number>(0);
     const [showCategories, setShowCategories] = useState<boolean>(false);
 
     useEffect(() => {
-        if (categories.length === 2) {
+        try {
             const getAllCategories = async () => {
                 const allCategories: Category[] =
                     await categoryApi.getAllMyCategories();
-
-                const categoryListName = [
-                    ...allCategories.map(({ name }) => name),
-                ];
-
-                const categoryMap: { [categoryName: string]: string } = {};
-
-                allCategories.forEach(({ category_id, name }) => {
-                    categoryMap[name] = category_id;
-                });
-
-                setCategories((prev) => [...prev, ...categoryListName]);
-                setCategoryInfo((prev) => ({ ...prev, ...categoryMap }));
+                setCategories(allCategories);
             };
             getAllCategories();
+        } finally {
+            setIsLoading(false);
         }
     }, []);
+
+    const categoryIdsMap = useMemo(() => {
+        const categoryMap: { [categoryId: string]: string } = {};
+        categories.forEach(({ category_id, name }) => {
+            categoryMap[category_id!] = name;
+        });
+        return categoryMap;
+    }, [categories]);
+
+    const categoryList = useMemo(
+        () => [
+            'All Categories',
+            'Low Stock',
+            ...categories.map(({ name }) => name),
+        ],
+        [categories]
+    );
+
+    const categoryNamesMap = useMemo(() => {
+        const categoryMap: { [categoryName: string]: string } = {};
+        categories.forEach(({ category_id, name }) => {
+            categoryMap[name] = category_id!;
+        });
+        return categoryMap;
+    }, [categories]);
 
     const handleShowCategories = () => {
         return setShowCategories((current) => !current);
     };
 
     const categoryData = {
+        isLoading,
         categories,
-        categoryInfo,
+        setCategories,
         categorySelect,
         setCategorySelect,
+        categoryList,
+        categoryIdsMap,
+        categoryNamesMap,
         active,
         setActive,
         showCategories,

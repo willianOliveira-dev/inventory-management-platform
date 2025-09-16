@@ -8,7 +8,7 @@ export default function ButtonFilterCategories() {
     const {
         active,
         setActive,
-        categories,
+        categoryList,
         categorySelect,
         setCategorySelect,
         setShowCategories,
@@ -37,7 +37,7 @@ export default function ButtonFilterCategories() {
                         id="menu1"
                         className="flex flex-col gap-2 p-2 w-max"
                     >
-                        {categories.map((categoryName, idx) => (
+                        {categoryList.map((categoryName, idx) => (
                             <li
                                 role="menuitem"
                                 aria-selected={active === idx}

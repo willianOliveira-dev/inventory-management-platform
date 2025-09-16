@@ -19,14 +19,12 @@ import { type Item } from '../types';
 
 export default function Products() {
     const [showPopUp, setShowPopUp] = useState<boolean>(false);
-    const [selectProduct, setSelectProduct] = useState<
-        Pick<Item, 'item_id' | 'name'>
-    >({ item_id: '', name: '' });
+    const [selectProduct, setSelectProduct] = useState< Pick<Item, 'item_id' | 'name'>>({ item_id: '', name: '' });
     const [search, setSearch] = useState<string>('');
-    const { items, categoryIdsMap, isLoading, removeItemFromState } =
-        useItems();
+    const { items, isLoading, removeItemFromState } = useItems();
     const categoriesFilter = useCategories();
     const navigate = useNavigate();
+
     const productsFilter = useMemo(() => {
         return items.filter((item) => {
             const nameMatch: boolean = item.name
@@ -37,12 +35,12 @@ export default function Products() {
                 categoriesFilter.categorySelect === 'All Categories' ||
                 (categoriesFilter.categorySelect == 'Low Stock' &&
                     item.current_quantity < 10) ||
-                categoryIdsMap[item.category_id] ===
+                categoriesFilter.categoryIdsMap[item.category_id] ===
                     categoriesFilter.categorySelect;
 
             return nameMatch && categoryMatch;
         });
-    }, [search, items, categoryIdsMap, categoriesFilter.categorySelect]);
+    }, [search, items, categoriesFilter.categoryIdsMap, categoriesFilter.categorySelect]);
 
     return (
         <section className="flex flex-col gap-6 p-4 md:p-6">
@@ -146,7 +144,7 @@ export default function Products() {
                                                 <td className="px-4 py-3 whitespace-nowrap">
                                                     <CategoryBadgeColored
                                                         category={
-                                                            categoryIdsMap[
+                                                            categoriesFilter.categoryIdsMap[
                                                                 category_id
                                                             ]
                                                         }

@@ -7,11 +7,13 @@ import Home from '../pages/Home';
 import Products from '../pages/Products';
 import AddProduct from '../pages/AddProduct';
 import productLoader from '../loaders/productLoader';
-import { createBrowserRouter } from 'react-router-dom';
 import ProductBoundary from '../errors/ProductBoundary';
 import EditProduct from '../pages/EditProduct';
-import Page404 from '../pages/Page404';
 import Categories from '../pages/Categories';
+import AddCategory from '../pages/addCategory';
+import EditCategory from '../pages/EditCategory';
+import categoryLoader from '../loaders/categoryLoader';
+import { createBrowserRouter } from 'react-router-dom';
 
 const router = createBrowserRouter([
     {
@@ -50,6 +52,15 @@ const router = createBrowserRouter([
             {
                 path: 'categories',
                 element: <Categories />,
+            },
+            {
+                path: 'categories/new',
+                element: <AddCategory />,
+            },
+            {
+                path: 'categories/:categoryId/edit',
+                loader: categoryLoader,
+                element: <EditCategory />,
             },
         ],
     },

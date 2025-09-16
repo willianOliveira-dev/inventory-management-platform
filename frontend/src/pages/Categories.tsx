@@ -3,26 +3,35 @@ import CardCategory from '../components/ui/CardCategory';
 import { IoMdAdd } from 'react-icons/io';
 import { useItems } from '../hooks/useItems';
 import { useCategories } from '../hooks/useCategories';
+import { useMemo } from 'react';
 
 export default function Categories() {
-    const { items, categoryIdsMap } = useItems();
-    const { categories, categoryInfo } = useCategories();
-    const record: Record<string, number> = {};
+    const { items } = useItems();
+    const { categoryList, categories, categoryNamesMap, categoryIdsMap } = useCategories();
 
-    categories.slice(2).forEach((category) => {
-        record[category] = 0;
-    });
+    const productReference: { categoryName: string; productCount: number }[] =
+        useMemo(() => {
+            const record: Record<string, number> = {};
 
-    if (items.length > 0) {
-        items.forEach(({ category_id }) => {
-            const categoryName = categoryIdsMap[category_id!];
-            if (categoryIdsMap[category_id!]) {
-                record[categoryName]++;
-            }
-        });
-    }
+            categoryList.slice(2).forEach((category) => {
+                record[category] = 0;
+            });
 
-    const productReference = Object.entries(record).map(([category, referance]) => ({category, referance}))
+            items.forEach(({ category_id }) => {
+                const categoryName = categoryIdsMap[category_id];
+                if (categoryName) {
+                    console.log(categoryName);
+                    record[categoryName] = (record[categoryName] || 0) + 1;
+                }
+            });
+
+            return Object.entries(record).map(
+                ([categoryName, productCount]) => ({
+                    categoryName,
+                    productCount,
+                })
+            );
+        }, [items, categoryList, categoryIdsMap, categories]);
 
     return (
         <section className="flex flex-col gap-6 p-4 md:p-6">
@@ -42,14 +51,17 @@ export default function Categories() {
                     icon={<IoMdAdd />}
                 />
             </header>
-            <div className="grid gap-2 grid-cols-1  sm:grid-cols-2 lg:flex">
-                {productReference.map(({ category, referance }) => (
-                    <CardCategory
-                        category={category}
-                        category_id={categoryInfo[category]}
-                        productReference={referance}
-                    />
-                ))}
+            <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap">
+                {productReference.map(({ categoryName, productCount }, idx) => {
+                    return (
+                        <CardCategory
+                            key={idx}
+                            category={categoryName}
+                            category_id={categoryNamesMap[categoryName]}
+                            productCount={productCount}
+                        />
+                    );
+                })}
             </div>
         </section>
     );

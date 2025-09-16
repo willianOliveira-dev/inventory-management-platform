@@ -5,11 +5,11 @@ import ItemProvider from '../../providers/ItemProvider';
 export default function MainContent() {
     return (
         <main className="flex-1 overflow-y-auto">
-            <ItemProvider>
-                <CategoryProvider>
+            <CategoryProvider>
+                <ItemProvider>
                     <Outlet />
-                </CategoryProvider>
-            </ItemProvider>
+                </ItemProvider>
+            </CategoryProvider>
         </main>
     );
 }
