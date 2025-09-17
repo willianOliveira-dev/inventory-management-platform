@@ -5,9 +5,9 @@ const CategorySchema = z.object({
     name: z
         .string({ error: emptyErrorMap })
         .nonempty({ error: 'Name cannot be left blank.' })
-        .min(3, { error: 'Item name must be at least 3 characters long.' })
+        .min(3, { error: 'Category name must be at least 3 characters long.' })
         .max(120, {
-            error: 'The item name must be a maximum of 120 characters.',
+            error: 'The category name must be a maximum of 120 characters.',
         })
         .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ0-9 ]+$/, 'Only letters, numbers, and spaces.')
         .transform((str) => str.trim()),
