@@ -217,7 +217,6 @@ erDiagram
         DATETIME created_at
         DATETIME updated_at
     }
-
     categories {
         CHAR(36) category_id PK
         CHAR(36) user_id FK
@@ -225,7 +224,6 @@ erDiagram
         DATETIME created_at
         DATETIME updated_at
     }
-
     items {
         CHAR(36) item_id PK
         CHAR(36) user_id FK
@@ -237,7 +235,6 @@ erDiagram
         DATETIME created_at
         DATETIME updated_at
     }
-
     stock_history {
         CHAR(36) history_id PK
         CHAR(36) item_id FK
@@ -249,7 +246,6 @@ erDiagram
         VARCHAR(10) operation
         DATETIME created_at
     }
-
     refresh_tokens {
         CHAR(36) token_id PK
         CHAR(36) user_id FK
@@ -260,7 +256,6 @@ erDiagram
         DATETIME expires_at
         DATETIME revoked_at
     }
-
     users ||--o{ categories : "creates"
     users ||--o{ items : "owns"
     users ||--o{ stock_history : "tracks changes"
