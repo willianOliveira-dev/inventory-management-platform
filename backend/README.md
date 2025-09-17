@@ -210,52 +210,53 @@ Este diagrama representa a estrutura do banco de dados e as relações entre as 
 ```mermaid
 erDiagram
     users {
-        CHAR(36) user_id PK
-        VARCHAR(50) name
-        VARCHAR(150) email UN
-        VARCHAR(250) password
-        DATETIME created_at
-        DATETIME updated_at
+        string user_id PK
+        string name
+        string email
+        string password
+        date created_at
+        date updated_at
     }
     categories {
-        CHAR(36) category_id PK
-        CHAR(36) user_id FK
-        VARCHAR(120) name UN
-        DATETIME created_at
-        DATETIME updated_at
+        string category_id PK
+        string user_id FK
+        string name
+        date created_at
+        date updated_at
     }
     items {
-        CHAR(36) item_id PK
-        CHAR(36) user_id FK
-        CHAR(36) category_id FK
-        VARCHAR(120) name
-        INT price_cents
-        VARCHAR(500) description
-        INT current_quantity
-        DATETIME created_at
-        DATETIME updated_at
+        string item_id PK
+        string user_id FK
+        string category_id FK
+        string name
+        int price_cents
+        string description
+        int current_quantity
+        date created_at
+        date updated_at
     }
     stock_history {
-        CHAR(36) history_id PK
-        CHAR(36) item_id FK
-        CHAR(36) user_id FK
-        INT old_price_cents
-        INT new_price_cents
-        INT old_quantity
-        INT new_quantity
-        VARCHAR(10) operation
-        DATETIME created_at
+        string history_id PK
+        string item_id FK
+        string user_id FK
+        int old_price_cents
+        int new_price_cents
+        int old_quantity
+        int new_quantity
+        string operation
+        date created_at
     }
     refresh_tokens {
-        CHAR(36) token_id PK
-        CHAR(36) user_id FK
-        VARCHAR(255) token UN
-        BOOLEAN revoked
-        CHAR(36) replaced_by
-        DATETIME created_at
-        DATETIME expires_at
-        DATETIME revoked_at
+        string token_id PK
+        string user_id FK
+        string token
+        boolean revoked
+        string replaced_by
+        date created_at
+        date expires_at
+        date revoked_at
     }
+
     users ||--o{ categories : "creates"
     users ||--o{ items : "owns"
     users ||--o{ stock_history : "tracks changes"
