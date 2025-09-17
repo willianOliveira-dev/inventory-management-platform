@@ -1,13 +1,15 @@
 import ButtonLink from '../components/ui/ButtonLink';
 import CardCategory from '../components/ui/CardCategory';
-import { IoMdAdd } from 'react-icons/io';
 import { useItems } from '../hooks/useItems';
 import { useCategories } from '../hooks/useCategories';
+import { IoMdAdd } from 'react-icons/io';
 import { useMemo } from 'react';
+import { IoPricetagsOutline } from 'react-icons/io5';
 
 export default function Categories() {
     const { items } = useItems();
-    const { categoryList, categories, categoryNamesMap, categoryIdsMap } = useCategories();
+    const { categoryList, categories, categoryNamesMap, categoryIdsMap } =
+        useCategories();
 
     const productReference: { categoryName: string; productCount: number }[] =
         useMemo(() => {
@@ -50,17 +52,31 @@ export default function Categories() {
                     icon={<IoMdAdd />}
                 />
             </header>
-            <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap">
-                {productReference.map(({ categoryName, productCount }, idx) => {
-                    return (
-                        <CardCategory
-                            key={idx}
-                            category={categoryName}
-                            category_id={categoryNamesMap[categoryName]}
-                            productCount={productCount}
-                        />
-                    );
-                })}
+            <div className={`grid gap-2 grid-cols-1 ${ productReference.length > 0 ? "sm:grid-cols-2" : "sm:grid-cols-1"} lg:flex lg:flex-wrap`}>
+                {productReference.length > 0 ? (
+                    productReference.map(
+                        ({ categoryName, productCount }, idx) => {
+                            return (
+                                <CardCategory
+                                    key={idx}
+                                    category={categoryName}
+                                    category_id={categoryNamesMap[categoryName]}
+                                    productCount={productCount}
+                                />
+                            );
+                        }
+                    )
+                ) : (
+                    <div className="flex flex-col items-center gap-4 w-full text-center text-white py-6 bg-stone-900 rounded-md">
+                        <span className="text-3xl text-sky-500 w-10 h-10">
+                            <IoPricetagsOutline className="size-full" />
+                        </span>
+                        <p>No categories found</p>
+                        <p className="font-light text-gray-300 text-sm">
+                            Try creating a new category.
+                        </p>
+                    </div>
+                )}
             </div>
         </section>
     );

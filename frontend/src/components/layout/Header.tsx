@@ -1,12 +1,8 @@
 import BurgerMenu from '../ui/BurgerMenu';
-import DropDownUser from '../ui/DropDownUser';
 import { FaUser } from 'react-icons/fa';
 import { useAuth } from '../../hooks/useAuth';
-import { IoIosArrowDown } from 'react-icons/io';
-import { useState } from 'react';
 
 export default function Header() {
-    const [showDropDownUser, setShowDropDownUser] = useState<boolean>(false)
     const { user } = useAuth();
     const dateNow: number = Date.now();
     const dateTimeFormat = new Intl.DateTimeFormat('en', {
@@ -23,15 +19,11 @@ export default function Header() {
                 <span className="hidden bg-gradient-to-r bg-clip-text from-violet-400 via-violet-500 to-violet-700 text-transparent sm:block">
                     {dateFormat}
                 </span>
-                <div  aria-haspopup="true" aria-expanded={showDropDownUser}   onClick={() => setShowDropDownUser(current => !current)} className=" relative flex items-center gap-2 text-white hover:bg-stone-900/50 px-2 py-[4px] rounded-md cursor-pointer duration-300">
+                <div className=" relative flex items-center gap-2 text-white px-2 py-[4px]">
                     <span className="flex justify-center items-center w-6 h-6 bg-violet-400 rounded-full">
                         <FaUser />
                     </span>
-                    <span className='font-light'>{user?.name}</span>
-                    <span>
-                        <IoIosArrowDown />
-                    </span>
-                    {showDropDownUser && <DropDownUser/>}
+                    <span className="font-light">{user?.name}</span>
                 </div>
             </div>
         </header>

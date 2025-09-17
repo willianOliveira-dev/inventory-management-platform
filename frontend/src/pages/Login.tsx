@@ -10,10 +10,7 @@ import { useAuth } from '../hooks/useAuth';
 export default function Login() {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [error, setError] = useState<{ code: string; message: string }>({
-        code: '',
-        message: '',
-    });
+    const [error, setError] = useState<{ code: string; message: string }>({ code: '',  message: '',});
     const [loading, setLoading] = useState<boolean>(false);
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -98,7 +95,7 @@ export default function Login() {
                                             : 'border-gray-600 focus:border-violet-500 focus:ring-violet-500 '
                                     }`}
                                 placeholder=" "
-                                autoComplete='email'
+                                autoComplete="email"
                                 required
                             />
                             <label
@@ -179,13 +176,6 @@ export default function Login() {
                                 </span>
                             )}
                         </div>
-
-                        <Link
-                            className="text-gray-400 text-sm self-end hover:text-violet-400 transition-colors"
-                            to={'/forgot-password'}
-                        >
-                            Forgot password?
-                        </Link>
 
                         <button
                             type="submit"
