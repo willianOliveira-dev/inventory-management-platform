@@ -4,40 +4,43 @@ import emptyErrorMap from '@validations/error/emptyErrorMap';
 const ItemSchema = z.object({
     name: z
         .string({ error: emptyErrorMap })
-        .nonempty({ error: 'Name cannot be left blank.' })
-        .min(3, { error: 'Item name must be at least 3 characters long.' })
+        .nonempty({ error: 'O nome não pode ficar em branco.' })
+        .min(3, { error: 'O nome do item deve ter no mínimo 3 caracteres.' })
         .max(120, {
-            error: 'The item name must be a maximum of 120 characters.',
+            error: 'O nome do item deve ter no máximo 120 caracteres.',
         })
         .transform((str) => str.trim()),
-    category_id: z.uuid(),
+
+    category_id: z.uuid({
+        error: 'O ID da categoria deve ser um UUID válido.',
+    }),
+
     description: z
         .string({ error: emptyErrorMap })
-        .nonempty({ error: 'Description cannot be left blank.' })
-        .min(50, { error: 'Description must be at least 50 characters long.' })
-        .max(500, {
-            error: 'The Description must be a maximum of 500 characters.',
-        })
+        .nonempty({ error: 'A descrição não pode ficar em branco.' })
+        .min(50, { error: 'A descrição deve ter no mínimo 50 caracteres.' })
+        .max(500, { error: 'A descrição deve ter no máximo 500 caracteres.' })
         .transform((str) => str.trim()),
+
     price_cents: z
-        .number({ error: emptyErrorMap })
+        .number({ error: 'O valor deve ser um número.' })
         .int({
-            error: 'Only whole values are allowed. Example: R$ 1.00 = 100 cents.',
+            error: 'Somente valores inteiros são permitidos. Exemplo: R$ 1,00 = 100 centavos.',
         })
-        .positive({ error: 'The value must be positive.' })
-        .min(100, { error: 'The minimum value is R$ 1.00 (100 cents).' }),
+        .positive({ error: 'O valor deve ser positivo.' })
+        .min(100, { error: 'O valor mínimo é R$ 1,00 (100 centavos).' }),
+
     current_quantity: z
-        .number()
-        .int({ error: 'The value must be an integer.' })
-        .positive({ error: 'The value must be positive.' })
-        .min(0, {
-            error: 'It is not allowed to have a negative balance in stock.',
-        }),
+        .number({ error: 'A quantidade deve ser um número.' })
+        .int({ error: 'A quantidade deve ser um número inteiro.' })
+        .positive({ error: 'A quantidade deve ser positiva.' })
+        .min(0, { error: 'Não é permitido ter saldo negativo em estoque.' }),
 });
+
 const ItemUpdateSchema = ItemSchema.partial().refine(
     (data) => Object.keys(data).length > 0,
     {
-        message: 'At least one field must be provided for update',
+        message: 'Pelo menos um campo deve ser fornecido para atualização.',
         path: ['body'],
     }
 );

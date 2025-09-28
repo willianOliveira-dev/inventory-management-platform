@@ -4,12 +4,16 @@ import emptyErrorMap from '@validations/error/emptyErrorMap';
 const CategorySchema = z.object({
     name: z
         .string({ error: emptyErrorMap })
-        .nonempty({ error: 'Name cannot be left blank.' })
-        .min(3, { error: 'Category name must be at least 3 characters long.' })
-        .max(120, {
-            error: 'The category name must be a maximum of 120 characters.',
+        .nonempty({ error: 'O nome não pode ficar em branco.' })
+        .min(3, {
+            error: 'O nome da categoria deve ter no mínimo 3 caracteres.',
         })
-        .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ0-9 ]+$/, 'Only letters, numbers, and spaces.')
+        .max(120, {
+            error: 'O nome da categoria deve ter no máximo 120 caracteres.',
+        })
+        .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ0-9 ]+$/, {
+            message: 'Apenas letras, números e espaços são permitidos.',
+        })
         .transform((str) => str.trim()),
 });
 

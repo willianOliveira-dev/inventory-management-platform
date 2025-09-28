@@ -23,7 +23,7 @@ export default function errorHandler(
                 'error',
                 'INTERNAL_SERVER_ERROR',
                 500,
-                'An unexpected error occurred'
+                'Ocorreu um erro inesperado.'
             )
         );
 }

@@ -32,7 +32,7 @@ export default function authMiddleware(
                     'error',
                     AuthResponseCode.TOKEN_MISSING,
                     401,
-                    'Authorization header malformed or missing'
+                    'Cabeçalho de autorização malformado ou ausente.'
                 )
             );
     }
@@ -52,7 +52,7 @@ export default function authMiddleware(
                     'error',
                     AuthResponseCode.TOKEN_INVALID,
                     403,
-                    'Invalid or expired token'
+                    'Token inválido ou expirado.'
                 )
             );
     }

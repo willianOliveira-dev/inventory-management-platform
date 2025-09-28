@@ -30,7 +30,7 @@ export default class RefreshTokenService {
 
             return newToken;
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to save refresh token');
+            handleServiceError(error, 'Falha ao salvar o token de atualização.');
         }
     }
 
@@ -51,7 +51,7 @@ export default class RefreshTokenService {
             );
             return tokenRow;
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to search for token by id');
+            handleServiceError(error, 'Falha ao buscar o token pelo ID.');
         }
     }
 
@@ -72,7 +72,7 @@ export default class RefreshTokenService {
 
             return tokenRow;
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to replace refresh token');
+            handleServiceError(error, 'Falha ao substituir o token de atualização.');
         }
     }
 
@@ -84,7 +84,7 @@ export default class RefreshTokenService {
             );
             return revokeUser;
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to remove all user access');
+            handleServiceError(error, 'Falha ao remover todo o acesso do usuário.');
         }
     }
 
@@ -92,7 +92,7 @@ export default class RefreshTokenService {
         try {
             await refreshTokenModel.destroy(itemId);
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to remove token');
+            handleServiceError(error, 'Falha ao remover o token.');
         }
     }
 }

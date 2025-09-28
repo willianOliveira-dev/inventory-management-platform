@@ -34,7 +34,7 @@ export default class BaseModel {
          * @throws Throws an error if the table is invalid or not mapped.
          */
         if (!BaseModel._tableIdMap[table]) {
-            throw new Error(`Invalid or unmapped table: ${table}`);
+            throw new Error(`Tabela inválida ou não mapeada: ${table}`);
         }
     }
 
@@ -239,7 +239,7 @@ export default class BaseModel {
 
             if (queryUpdate.affectedRows === 0) {
                 throw new NotFoundError(
-                    `Record with ID ${id} not found in table ${table}`
+                    `Registro com ID ${id} não encontrado na tabela ${table}.`
                 );
             }
 
@@ -281,7 +281,7 @@ export default class BaseModel {
 
             if (resultSelect[0].count === 0) {
                 throw new NotFoundError(
-                    `Record with ID ${id} not found in table ${table}`
+                    `Registro com ID ${id} não encontrado na tabela ${table}.`
                 );
             }
 

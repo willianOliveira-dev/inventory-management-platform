@@ -87,7 +87,7 @@ export default class AuthService {
 
         if (!isValidPassword) {
             throw new UnauthorizedError(
-                'The password provided is incorrect.',
+                'A senha fornecida está incorreta.',
                 AuthResponseCode.AUTH_INVALID_PASSWORD
             );
         }
@@ -119,7 +119,7 @@ export default class AuthService {
                 expires_at
             );
         } catch (error: unknown) {
-            handleServiceError(error, 'Login attempt unsuccessful');
+            handleServiceError(error, 'Tentativa de login malsucedida.');
         }
 
         return { accessToken, refreshToken };
@@ -162,7 +162,7 @@ export default class AuthService {
 
         if (!refreshTokenRaw) {
             throw new UnauthorizedError(
-                'No refresh token',
+                'Sem token de atualização.',
                 AuthResponseCode.TOKEN_MISSING
             );
         }
@@ -176,7 +176,7 @@ export default class AuthService {
             );
         } catch (error: unknown) {
             throw new UnauthorizedError(
-                'Invalid refresh token',
+                'Token de atualização inválido.',
                 AuthResponseCode.AUTH_INVALID_REFRESH_TOKEN
             );
         }
@@ -192,7 +192,7 @@ export default class AuthService {
             // Safe action: revoke all user tokens and force login
             await refreshTokenService.revokeAllForUser(user_id);
             throw new UnauthorizedError(
-                'Refresh token reuse detected or unknown. All sessions revoked.',
+                'Reutilização de token de atualização detectada ou origem desconhecida. Todas as sessões foram revogadas.',
                 AuthResponseCode.SECURITY_TOKEN_REUSED
             );
         }
@@ -201,7 +201,7 @@ export default class AuthService {
             // possible attack (token already revoked and is being reused)
             await refreshTokenService.revokeAllForUser(user_id);
             throw new UnauthorizedError(
-                'Refresh token has been revoked. All sessions revoked.',
+                'O token de atualização foi revogado. Todas as sessões foram revogadas.',
                 AuthResponseCode.SECURITY_TOKEN_REUSED
             );
         }
@@ -215,7 +215,7 @@ export default class AuthService {
         if (!match) {
             await refreshTokenService.revokeAllForUser(user_id);
             throw new UnauthorizedError(
-                'Refresh token has been revoked. All sessions revoked.',
+                'O token de atualização foi revogado. Todas as sessões foram revogadas.',
                 AuthResponseCode.SECURITY_TOKEN_REUSED
             );
         }

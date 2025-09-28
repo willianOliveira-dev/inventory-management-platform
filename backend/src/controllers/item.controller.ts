@@ -27,7 +27,7 @@ export default class ItemController {
             'success',
             ItemResponseCode.ITEM_FETCH_SUCCESS,
             200,
-            'Items retrieved successfully',
+            'Itens recuperados com sucesso.',
             items
         );
 
@@ -48,7 +48,7 @@ export default class ItemController {
             'success',
             ItemResponseCode.ITEM_FETCH_SUCCESS,
             200,
-            `Successfully fetched item with ID ${id}`,
+            `Item com ID ${id} recuperado com sucesso.`,
             item
         );
 
@@ -71,7 +71,7 @@ export default class ItemController {
             'success',
             ItemResponseCode.ITEM_FETCH_SUCCESS,
             200,
-            `Successfully fetched items for user_id: ${user?.user_id}`,
+            `Itens recuperados com sucesso para o usuário com ID: ${user?.user_id}`,
             items
         );
         res.status(200).send(response);
@@ -97,7 +97,7 @@ export default class ItemController {
             'success',
             ItemResponseCode.ITEM_CREATED,
             201,
-            'Item created successfully',
+            'Item criado com sucesso.',
             item
         );
 
@@ -122,7 +122,7 @@ export default class ItemController {
             'success',
             ItemResponseCode.ITEM_UPDATED,
             200,
-            `Successfully updated item with ID ${id}`,
+            `Item com ID ${id} atualizado com sucesso.`,
             item
         );
 
@@ -146,7 +146,7 @@ export default class ItemController {
             'success',
             ItemResponseCode.ITEM_DELETED,
             200,
-            `Item with ID ${id} successfully deleted`
+            `Item com ID ${id} excluído com sucesso.`
         );
 
         return res.status(200).send(response);

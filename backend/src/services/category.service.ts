@@ -35,7 +35,7 @@ export default class CategoryService {
                 await categoryModel.getAllCategories();
             return categories;
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to fetch all categories');
+            handleServiceError(error, 'Falha ao buscar todas as categorias.');
         }
     }
 
@@ -55,14 +55,14 @@ export default class CategoryService {
 
             if (category.length === 0) {
                 throw new NotFoundError(
-                    'No records matching the category were found.',
+                    'Nenhum registro correspondente à categoria foi encontrado.',
                     CategoryResponseCode.CATEGORY_NOT_FOUND
                 );
             }
 
             return category[0];
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to search for category by id');
+            handleServiceError(error, 'Falha ao buscar categoria pelo ID.');
         }
     }
 
@@ -81,7 +81,7 @@ export default class CategoryService {
                 await categoryModel.getCategoriesByUserId(user_id);
             return categories;
         } catch (error) {
-            handleServiceError(error, 'Failed to search for category by user_id');
+            handleServiceError(error, 'Falha ao buscar categoria pelo user_id.');
         }
     }
 
@@ -113,7 +113,7 @@ export default class CategoryService {
 
             if (exists) {
                 throw new ValidationError(
-                    `Category "${name}" already exists`,
+                    `A categoria "${name}" já existe.`,
                     CategoryResponseCode.CATEGORY_ALREADY_EXISTS
                 );
             }
@@ -139,7 +139,7 @@ export default class CategoryService {
 
             return newCategory;
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to create category');
+            handleServiceError(error, 'Falha ao criar a categoria.');
         }
     }
 
@@ -177,7 +177,7 @@ export default class CategoryService {
 
             return updatedCategory;
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to update category');
+            handleServiceError(error, 'Falha ao atualizar a categoria.');
         }
     }
 
@@ -193,13 +193,13 @@ export default class CategoryService {
 
             if (category.user_id !== user_id) {
                 throw new ForbiddenError(
-                    "You don't have permission to delete this item",
+                    "Você não tem permissão para excluir este item.",
                     CategoryResponseCode.CATEGORY_FORBIDDEN
                 );
             }
             await categoryModel.deleteCategory(categoryId);
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to delete category by id');
+            handleServiceError(error, 'Falha ao excluir a categoria pelo ID.');
         }
     }
 }

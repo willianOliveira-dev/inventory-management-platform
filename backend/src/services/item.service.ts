@@ -59,7 +59,7 @@ export default class ItemService {
                 ])
             );
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to register stock history');
+            handleServiceError(error, 'Falha ao registrar o histórico de estoque.');
         }
     }
 
@@ -91,7 +91,7 @@ export default class ItemService {
 
         if (!exists) {
             throw new NotFoundError(
-                `Category with id "${category_id}" does not exist.`
+                `A categoria com o ID "${category_id}" não existe.`
             );
         }
 
@@ -121,7 +121,7 @@ export default class ItemService {
             const items: Item[] = await itemModel.getAllItems();
             return items;
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to fetch all items');
+            handleServiceError(error, 'Falha ao buscar todos os itens.');
         }
     }
 
@@ -142,14 +142,14 @@ export default class ItemService {
 
             if (item.length === 0) {
                 throw new NotFoundError(
-                    'No records matching the item were found.',
+                    'Nenhum registro correspondente ao item foi encontrado.',
                     ItemResponseCode.ITEM_NOT_FOUND
                 );
             }
 
             return item[0];
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to search for item by id');
+            handleServiceError(error, 'Falha ao buscar item pelo ID.');
         }
     }
 
@@ -169,7 +169,7 @@ export default class ItemService {
             const items: Item[] = await itemModel.getItemByUserId(user_id);
             return items;
         } catch (error) {
-            handleServiceError(error, 'Failed to search for item by user_id');
+            handleServiceError(error, 'Falha ao buscar item pelo user_id.');
         }
     }
 
@@ -231,7 +231,7 @@ export default class ItemService {
 
             return newItem;
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to create item');
+            handleServiceError(error, 'Falha ao criar o item.');
         }
     }
 
@@ -303,7 +303,7 @@ export default class ItemService {
 
             return updatedItem;
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to update Item');
+            handleServiceError(error, 'Falha ao atualizar o item.');
         }
     }
 
@@ -325,14 +325,14 @@ export default class ItemService {
 
             if (item.user_id !== userId) {
                 throw new ForbiddenError(
-                    "You don't have permission to delete this item",
+                    "Você não tem permissão para excluir este item.",
                     ItemResponseCode.ITEM_FORBIDDEN
                 );
             }
 
             await itemModel.deleteItem(itemId);
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to delete item by id');
+            handleServiceError(error, 'Falha ao excluir o item pelo ID.');
         }
     }
 }

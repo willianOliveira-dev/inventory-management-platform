@@ -37,7 +37,7 @@ export default class CategoryModel {
         } catch (error: unknown) {
             handleServiceError(
                 error,
-                'Error checking for duplicate category name'
+                'Erro ao verificar nome de categoria duplicado.'
             );
         }
     }
@@ -63,9 +63,9 @@ export default class CategoryModel {
             const errorMessage: string =
                 error instanceof Error
                     ? error.message
-                    : 'Unknown error occurred';
+                    : 'Ocorreu um erro desconhecido.';
             throw new Error(
-                `Error checking if category ID exists: ${errorMessage}`
+                `Erro ao verificar se o ID da categoria existe: ${errorMessage}`
             );
         }
     }

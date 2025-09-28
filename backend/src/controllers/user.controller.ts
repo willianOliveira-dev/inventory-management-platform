@@ -27,7 +27,7 @@ export default class UserController {
             'success',
             UserResponseCode.USER_FETCH_SUCCESS,
             200,
-            'Users retrieved successfully',
+            'Usuários recuperados com sucesso.',
             users
         );
 
@@ -49,7 +49,7 @@ export default class UserController {
             'success',
             UserResponseCode.USER_FETCH_SUCCESS,
             200,
-            `Successfully fetched user with ID ${id}`,
+            `Usuário com ID ${id} recuperado com sucesso.`,
             user
         );
 
@@ -73,7 +73,7 @@ export default class UserController {
             'success',
             UserResponseCode.USER_CREATED,
             201,
-            'User created successfully',
+            'Usuário criado com sucesso.',
             user
         );
 
@@ -97,7 +97,7 @@ export default class UserController {
             'success',
             UserResponseCode.USER_UPDATED,
             200,
-            `Successfully updated user with ID ${id}`,
+            `Usuário com ID ${id} atualizado com sucesso.`,
             user
         );
 
@@ -118,7 +118,7 @@ export default class UserController {
             'success',
             UserResponseCode.USER_DELETED,
             200,
-            `User with ID ${id} successfully deleted`
+            `Usuário com ID ${id} excluído com sucesso.`
         );
 
         return res.status(200).send(response);

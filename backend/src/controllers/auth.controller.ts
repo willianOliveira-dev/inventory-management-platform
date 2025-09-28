@@ -42,7 +42,7 @@ export default class AuthController {
             'success',
             AuthResponseCode.USER_LOGGED_OUT,
             200,
-            'User logged out successfully'
+            'Usuário desconectado com sucesso.'
         );
 
         return res.status(200).json(response);
@@ -87,7 +87,7 @@ export default class AuthController {
             'success',
             AuthResponseCode.USER_REGISTERED,
             201,
-            'User registered successfully',
+            'Usuário registrado com sucesso.',
             data
         );
 
@@ -131,7 +131,7 @@ export default class AuthController {
             'success',
             AuthResponseCode.USER_LOGGED_IN,
             200,
-            'User logged in successfully',
+            'Usuário conectado com sucesso.',
             data
         );
 
@@ -154,7 +154,7 @@ export default class AuthController {
                 'success',
                 UserResponseCode.USER_FETCH_SUCCESS,
                 200,
-                'User data retrieved successfully',
+                'Dados do usuário recuperados com sucesso.',
                 user
             )
         );
@@ -186,7 +186,7 @@ export default class AuthController {
             'success',
             AuthResponseCode.ACCESS_TOKEN_REFRESHED,
             200,
-            'Access token successfully refreshed',
+            'Token de acesso atualizado com sucesso.',
             newAccessToken
         );
 

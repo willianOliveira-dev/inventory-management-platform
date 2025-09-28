@@ -27,7 +27,7 @@ export default class CategoryController {
             'success',
             CategoryResponseCode.CATEGORY_FETCH_SUCCESS,
             200,
-            'Categories retrieved successfully',
+            'Categorias recuperadas com sucesso.',
             categories
         );
 
@@ -49,7 +49,7 @@ export default class CategoryController {
             'success',
             CategoryResponseCode.CATEGORY_FETCH_SUCCESS,
             200,
-            `Successfully fetched category with ID ${id}`,
+            `Categoria com ID ${id} recuperada com sucesso.`,
             category
         );
 
@@ -83,7 +83,7 @@ export default class CategoryController {
             'success',
             CategoryResponseCode.CATEGORY_CREATED,
             201,
-            'Category created successfully',
+            'Categoria criada com sucesso.',
             category
         );
 
@@ -106,7 +106,7 @@ export default class CategoryController {
             'success',
             CategoryResponseCode.CATEGORY_FETCH_SUCCESS,
             200,
-            `Successfully fetched categories for user_id: ${user?.user_id}`,
+            `Categorias recuperadas com sucesso para o user_id: ${user?.user_id}`,
             categories
         );
         res.status(200).send(response);
@@ -133,7 +133,7 @@ export default class CategoryController {
             'success',
             CategoryResponseCode.CATEGORY_UPDATED,
             200,
-            `Successfully updated category with ID ${id}`,
+            `Categoria com ID ${id} atualizada com sucesso.`,
             category
         );
 
@@ -161,7 +161,7 @@ export default class CategoryController {
             'success',
             CategoryResponseCode.CATEGORY_DELETED,
             200,
-            `Category with ID ${id} successfully deleted`
+            `Categoria com ID ${id} excluída com sucesso.`
         );
 
         return res.status(200).send(response);

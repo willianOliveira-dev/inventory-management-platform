@@ -34,7 +34,7 @@ export default class UserService {
             const users: User[] = await userModel.getAllUsers();
             return users;
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to fetch all users');
+            handleServiceError(error, 'Falha ao buscar todos os usuários.');
         }
     }
 
@@ -55,13 +55,13 @@ export default class UserService {
 
             if (user.length === 0) {
                 throw new NotFoundError(
-                    'No records matching the user were found.',
+                    'Nenhum registro correspondente ao usuário foi encontrado.',
                     UserResponseCode.USER_NOT_FOUND
                 );
             }
             return user[0];
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to search for user by id');
+            handleServiceError(error, 'Falha ao buscar usuário pelo ID.');
         }
     }
 
@@ -82,14 +82,14 @@ export default class UserService {
 
             if (!user) {
                 throw new NotFoundError(
-                    'The email address does not exist.',
+                    'O endereço de e-mail não existe.',
                     UserResponseCode.USER_NOT_FOUND
                 );
             }
 
             return user;
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to search for user by email');
+            handleServiceError(error, 'Falha ao buscar usuário pelo e-mail.');
         }
     }
 
@@ -128,7 +128,7 @@ export default class UserService {
 
             if (userExist) {
                 throw new ValidationError(
-                    'This email is already in use.',
+                    'Este e-mail já está em uso.',
                     UserResponseCode.USER_EMAIL_ALREADY_EXISTS
                 );
             }
@@ -148,7 +148,7 @@ export default class UserService {
 
             return safeUser as User;
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to create user');
+            handleServiceError(error, 'Falha ao criar o usuário.');
         }
     }
 
@@ -202,7 +202,7 @@ export default class UserService {
 
             return safeUser as User;
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to update user');
+            handleServiceError(error, 'Falha ao atualizar o usuário.');
         }
     }
 
@@ -217,7 +217,7 @@ export default class UserService {
         try {
             await userModel.deleteUser(userId);
         } catch (error: unknown) {
-            handleServiceError(error, 'Failed to delete user by id');
+            handleServiceError(error, 'Falha ao excluir o usuário pelo ID.');
         }
     }
 }
