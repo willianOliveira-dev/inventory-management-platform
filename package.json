@@ -1,0 +1,11 @@
+{
+    "name": "project",
+    "private": true,
+    "scripts": {
+        "build:backend": "cd backend && tsc",
+        "start:backend": "cd backend && node dist/app.js",
+        "start:backend:prod": "npm run build:backend && npm run start:backend",
+        "build:frontend": "cd frontend && npm install && npm run build",
+        "start": "npm run start:backend:prod"
+    }
+}
