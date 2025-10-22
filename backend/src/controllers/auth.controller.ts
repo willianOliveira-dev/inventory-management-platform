@@ -5,7 +5,8 @@ import AuthSchema from '@validations/auth.schema';
 import { AuthResponseCode } from 'constants/responsesCode/auth';
 import { UserSchema } from '@validations/user.schema';
 import { UserResponseCode } from 'constants/responsesCode/user';
-import type { AuthTokens, Payload, User, ValidateRequest } from 'types';
+import type { AuthTokens, User, ValidateRequest } from 'types';
+import { type Payload } from 'types/express/express';
 import type { Request, Response } from 'express';
 
 const authService: AuthService = new AuthService();
@@ -33,7 +34,7 @@ export default class AuthController {
 
         res.clearCookie('refreshToken', {
             httpOnly: true,
-            path: "/panel/v1/auth/refresh",
+            path: '/panel/v1/auth/refresh',
             sameSite: 'strict',
             secure: process.env.NODE_ENV === 'production',
         });
@@ -105,10 +106,10 @@ export default class AuthController {
          */
         const { email, password } = req.body;
 
-        const user: User =  await new UserService().getUserByEmail(email);
+        const user: User = await new UserService().getUserByEmail(email);
 
-        const { password: _, constructor, ...safeUser } = user; 
-        
+        const { password: _, constructor, ...safeUser } = user;
+
         const { accessToken, refreshToken } = await authService.login(
             email,
             password

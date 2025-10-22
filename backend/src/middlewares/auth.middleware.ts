@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
-import { AuthResponseCode } from 'constants/responsesCode/auth';
+import { AuthResponseCode } from '@constants/responsesCode/auth';
 import type { Request, Response, NextFunction } from 'express';
-import type { Payload } from 'types';
+import type { Payload } from 'types/express/express';
 import createResponse from '@utils/createResponse';
 
 export default function authMiddleware(
@@ -22,9 +22,8 @@ export default function authMiddleware(
      */
 
     const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1];
 
-    if (!token && !authHeader?.startsWith('Bearer ')) {
+    if (!authHeader && !authHeader?.startsWith('Bearer ')) {
         return res
             .status(401)
             .json(
@@ -37,12 +36,29 @@ export default function authMiddleware(
             );
     }
 
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) {
+        return res
+            .status(401)
+            .json(
+                createResponse(
+                    'error',
+                    AuthResponseCode.TOKEN_MISSING,
+                    401,
+                    'Token de acesso ausente após "Bearer".'
+                )
+            );
+    }
     try {
         const payload = jwt.verify(
             token as string,
             process.env.JWT_ACCESS_SECRET!
         ) as Payload;
-        req.user = payload;
+
+        if (req.user) {
+            req.user = payload;
+        }
+
         next();
     } catch (error) {
         return res

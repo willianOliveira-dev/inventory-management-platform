@@ -5,13 +5,8 @@ import RefreshTokenService from './refreshToken.service';
 import UnauthorizedError from '@errors/http/UnauthorizedError';
 import handleServiceError from '@utils/handleServiceError';
 import { v4 as uuidv4 } from 'uuid';
-import type {
-    Payload,
-    PayloadRefresh,
-    RefreshToken,
-    AuthTokens,
-    User,
-} from 'types';
+import type { PayloadRefresh, RefreshToken, AuthTokens, User } from 'types';
+import { type Payload } from 'types/express/express';
 import { AuthResponseCode } from 'constants/responsesCode/auth';
 
 const refreshTokenService: RefreshTokenService = new RefreshTokenService();

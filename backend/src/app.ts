@@ -4,7 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
-import errorHandler from 'middlewares/errorHandler';
+import errorHandler from '@middlewares/errorHandler';
 import { userRouter, itemRouter, categoryRouter, authRouter } from '@routes/index.route';
 
 const app: Express = express();

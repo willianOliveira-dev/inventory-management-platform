@@ -6,7 +6,9 @@
         "rootDir": "./src",
         "baseUrl": "./src",
         "paths": {
+            "@constants/*": ["constants/*"],
             "@config/*": ["config/*"],
+            "@middlewares/*": ["middlewares/*"],
             "@controllers/*": ["controllers/*"],
             "@errors/*": ["errors/*"],
             "@models/*": ["models/*"],
