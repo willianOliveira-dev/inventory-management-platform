@@ -1,5 +1,4 @@
 import * as z from 'zod';
-import emptyErrorMap from './error/emptyErrorMap';
 
 const AuthSchema = z.object({
     email: z

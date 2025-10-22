@@ -11,4 +11,4 @@ export interface UserBase {
 
 export type User = UserBase & RowDataPacket;
 
-
+export type UserLogin = Pick<UserBase, 'user_id' | 'email'>;
