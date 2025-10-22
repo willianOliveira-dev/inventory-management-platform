@@ -13,11 +13,17 @@ export default function CardAnalysis({
         <div className="space-y-2 bg-stone-800 rounded-md w-full p-2 text-white">
             <div className="flex items-center justify-between gap-2">
                 <h2 className="text-xl font-bold">{category}</h2>
-                <span className="text-gray-300 font-semibold">{totalValueByCategory}</span>
+                <span className="text-gray-300 font-semibold">
+                    {totalValueByCategory}
+                </span>
             </div>
             <div className="flex items-center justify-between gap-2">
-                <span className="text-gray-300 text-sm" >{productCount} products</span>
-                <span className="text-gray-300 text-sm">{totalPercentageInStock} do Total</span>
+                <span className="text-gray-300 text-sm">
+                    {productCount} produtos
+                </span>
+                <span className="text-gray-300 text-sm">
+                    {totalPercentageInStock} do Total
+                </span>
             </div>
         </div>
     );

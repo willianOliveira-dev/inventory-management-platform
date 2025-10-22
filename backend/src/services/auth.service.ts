@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import UserService from '@services/user.service';
 import RefreshTokenService from './refreshToken.service';
-import UnauthorizedError from '@errors/http/ UnauthorizedError';
+import UnauthorizedError from '@errors/http/UnauthorizedError';
 import handleServiceError from '@utils/handleServiceError';
 import { v4 as uuidv4 } from 'uuid';
 import type {

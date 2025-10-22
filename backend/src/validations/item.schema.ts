@@ -1,9 +1,8 @@
 import * as z from 'zod';
-import emptyErrorMap from '@validations/error/emptyErrorMap';
 
 const ItemSchema = z.object({
     name: z
-        .string({ error: emptyErrorMap })
+        .string({ error: 'O nome deve ser um texto.' })
         .nonempty({ error: 'O nome não pode ficar em branco.' })
         .min(3, { error: 'O nome do item deve ter no mínimo 3 caracteres.' })
         .max(120, {
@@ -11,12 +10,14 @@ const ItemSchema = z.object({
         })
         .transform((str) => str.trim()),
 
-    category_id: z.uuid({
-        error: 'O ID da categoria deve ser um UUID válido.',
-    }),
+    category_id: z
+        .uuid({
+            error: 'O ID da categoria deve ser um UUID válido.',
+        })
+        .nonempty({ error: 'A categoria_id é obrigatória.' }),
 
     description: z
-        .string({ error: emptyErrorMap })
+        .string({ error: 'A descrição deve ser um texto.' })
         .nonempty({ error: 'A descrição não pode ficar em branco.' })
         .min(50, { error: 'A descrição deve ter no mínimo 50 caracteres.' })
         .max(500, { error: 'A descrição deve ter no máximo 500 caracteres.' })
@@ -33,7 +34,6 @@ const ItemSchema = z.object({
     current_quantity: z
         .number({ error: 'A quantidade deve ser um número.' })
         .int({ error: 'A quantidade deve ser um número inteiro.' })
-        .positive({ error: 'A quantidade deve ser positiva.' })
         .min(0, { error: 'Não é permitido ter saldo negativo em estoque.' }),
 });
 

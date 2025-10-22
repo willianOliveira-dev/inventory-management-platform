@@ -92,123 +92,127 @@ export default function Reports() {
     };
 
     return (
-        <section className="flex flex-col gap-6 p-4 md:p-6">
-            <header className="flex flex-col justify-center gap-4 py-4 px-2 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                    <div>
-                        <ButtonLink
-                            className="flex gap-2 items-center text-white p-2 md:p-3 rounded-md cursor-pointer hover:bg-stone-900 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:ring-offset-2 focus:ring-offset-gray-900"
-                            to="/"
-                            text="Back"
-                            icon={<FaArrowLeft />}
+    <section className="flex flex-col gap-6 p-4 md:p-6">
+        <header className="flex flex-col justify-center gap-4 py-4 px-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <div>
+                    <ButtonLink
+                        className="flex gap-2 items-center text-white p-2 md:p-3 rounded-md cursor-pointer hover:bg-stone-900 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:ring-offset-2 focus:ring-offset-gray-900"
+                        to="/"
+                        text="Voltar"
+                        icon={<FaArrowLeft />}
+                    />
+                </div>
+                <div className="space-y-1">
+                    <h1 className="text-indigo-500 text-4xl lg:text-5xl font-bold tracking-tighter">
+                        Relatórios
+                    </h1>
+                    <p className="text-white text-sm md:text-base">
+                        Análise completa do seu inventário e desempenho
+                    </p>
+                </div>
+            </div>
+        </header>
+        {/* Cards de resumo */}
+        <div className="grid grid-cols-4 gap-4 w-full max-lg:grid-cols-2 max-sm:grid-cols-1">
+            <ReportCardView
+                label="Valor Total do Estoque"
+                data={formatPrice(totalStockValue)}
+                description="Valor total investido"
+                icon={
+                    <FaDollarSign className="size-full p-[5px] bg-green-600 rounded-full" />
+                }
+            />
+
+            <ReportCardView
+                label="Produtos Únicos"
+                data={String(items.length)}
+                description="Tipos diferentes de produtos"
+                icon={
+                    <FaBoxOpen className="size-full p-[5px] bg-purple-500 rounded-full" />
+                }
+            />
+            <ReportCardView
+                label="Total de Itens"
+                data={String(totalItems)}
+                description="Total de dados em estoque"
+                icon={
+                    <LuChartNoAxesCombined className="size-full p-[5px] bg-green-400 rounded-full" />
+                }
+            />
+
+            <ReportCardView
+                label="Estoque Baixo"
+                data={String(lowStock)}
+                description="Produtos com menos de 10 unidades"
+                icon={
+                    <FiAlertTriangle className="size-full p-[5px] bg-red-400 rounded-full" />
+                }
+            />
+        </div>
+        {/*Seção de Análise*/}
+        <div className="space-y-2 max-h-120 overflow-y-auto mt-4 py-4 px-2 bg-stone-900 rounded-md">
+            <h2 className="flex items-center px-4 gap-2 text-white text-2xl font-bold tracking-tighter">
+                <FaChartBar />
+                <span>Análise por categoria</span>
+            </h2>
+            <div className="space-y-2 p-2">
+                {productReference.map(
+                    ({ categoryName, productCount }, idx) => (
+                        <CardAnalysis
+                            key={idx}
+                            category={categoryName}
+                            productCount={productCount}
+                            totalValueByCategory={formatPrice(
+                                totalValueByCategory(categoryName)
+                            )}
+                            totalPercentageInStock={totalPercentageInStock(
+                                totalValueByCategory(categoryName)
+                            )}
                         />
-                    </div>
-                    <div className="space-y-1">
-                        <h1 className="text-indigo-500 text-4xl lg:text-5xl font-bold tracking-tighter">
-                            Reports
-                        </h1>
-                        <p className="text-white text-sm md:text-base">
-                            Complete analysis of your inventory and performance
-                        </p>
-                    </div>
-                </div>
-            </header>
-            {/* Cards de resumo */}
-            <div className="grid grid-cols-4 gap-4 w-full max-lg:grid-cols-2 max-sm:grid-cols-1">
-                <ReportCardView
-                    label="Total Stock Value"
-                    data={formatPrice(totalStockValue)}
-                    description="Total amount invested"
-                    icon={
-                        <FaDollarSign className="size-full p-[5px] bg-green-600 rounded-full" />
-                    }
-                />
-
-                <ReportCardView
-                    label="Unique Products"
-                    data={String(items.length)}
-                    description="Different types of products"
-                    icon={
-                        <FaBoxOpen className="size-full p-[5px] bg-purple-500 rounded-full" />
-                    }
-                />
-                <ReportCardView
-                    label="Total Items"
-                    data={String(totalItems)}
-                    description="Total data in stock"
-                    icon={
-                        <LuChartNoAxesCombined className="size-full p-[5px] bg-green-400 rounded-full" />
-                    }
-                />
-
-                <ReportCardView
-                    label="Low Stock"
-                    data={String(lowStock)}
-                    description="Products with less than 10 units"
-                    icon={
-                        <FiAlertTriangle className="size-full p-[5px] bg-red-400 rounded-full" />
-                    }
-                />
+                    )
+                )}
             </div>
-            {/*Seção de Análise*/}
-            <div className="space-y-2 max-h-120 overflow-y-auto mt-4 py-4 px-2 bg-stone-900 rounded-md">
-                <h2 className="flex items-center px-4 gap-2 text-white text-2xl font-bold tracking-tighter">
-                    <FaChartBar />
-                    <span>Analysis by category</span>
-                </h2>
-                <div className="space-y-2 p-2">
-                    {productReference.map(
-                        ({ categoryName, productCount }, idx) => (
-                            <CardAnalysis
-                                key={idx}
-                                category={categoryName}
-                                productCount={productCount}
-                                totalValueByCategory={formatPrice(
-                                    totalValueByCategory(categoryName)
-                                )}
-                                totalPercentageInStock={totalPercentageInStock(
-                                    totalValueByCategory(categoryName)
-                                )}
-                            />
-                        )
-                    )}
+        </div>
+        <div className="space-y-2 max-h-120 overflow-y-auto mt-4 py-4 px-2 bg-stone-900 rounded-md text-white">
+            <h2 className="flex items-center px-4 gap-2 text-white text-2xl font-bold tracking-tighter">
+                <HiDocumentChartBar />
+                <span>Resumo Executivo</span>
+            </h2>
+            <div className="flex justify-between gap-4 w-full p-4">
+                <div className="w-1/2">
+                    <h3 className="font-semibold mb-2">Status do estoque</h3>
+                    <ul className="flex flex-col gap-[3.5px] text-gray-400">
+                        <li className="text-xs">
+                            • {items.length} tipos de produtos cadastrados.
+                        </li>
+                        <li className="text-xs">
+                            • {totalItems} itens em estoque.
+                        </li>
+                        <li className="text-xs">
+                            • {lowStock} produtos com estoque baixo.
+                        </li>
+                        <li className="text-xs">
+                            • {formatPrice(totalStockValue)} em valor total investido.
+                        </li>
+                    </ul>
+                </div>
+                <div className="w-1/2">
+                    <h3 className="font-semibold mb-2">Recomendações</h3>
+                    <ul className="flex flex-col gap-[3.5px] text-gray-400">
+                        <li className="text-xs"> 
+                            {lowStock > 0 
+                                ? `• Reabastecer ${lowStock} produtos com estoque baixo.`
+                                : "• Todos os produtos têm estoque adequado."
+                            }
+                        </li>
+                        <li className="text-xs">
+                            • Monitorar regularmente os níveis de inventário.
+                        </li>
+                    </ul>
                 </div>
             </div>
-            <div className="space-y-2 max-h-120 overflow-y-auto mt-4 py-4 px-2 bg-stone-900 rounded-md text-white">
-                <h2 className="flex items-center px-4 gap-2 text-white text-2xl font-bold tracking-tighter">
-                    <HiDocumentChartBar />
-                    <span>Executive Summary</span>
-                </h2>
-                <div className="flex justify-between gap-4 w-full p-4">
-                    <div className="w-1/2">
-                        <h3 className="font-semibold mb-2">Stock status</h3>
-                        <ul className="flex flex-col gap-[3.5px] text-gray-400">
-                            <li className="text-xs">
-                                • {items.length} types of registered products
-                            </li>
-                            <li className="text-xs">
-                                • {totalItems} items in stock
-                            </li>
-                            <li className="text-xs">
-                                • {lowStock} products with low stock
-                            </li>
-                            <li className="text-xs">
-                                • {formatPrice(totalStockValue)} in total amount
-                                invested
-                            </li>
-                        </ul>
-                    </div>
-                    <div className="w-1/2">
-                        <h3 className="font-semibold mb-2">Recommendations</h3>
-                        <ul className="flex flex-col gap-[3.5px] text-gray-400">
-                            <li className="text-xs"> {lowStock > 0 ? `• Restock ${lowStock} products with low stock`:  "• All products have adequate stock"}</li>
-                            <li className="text-xs">
-                                • Regularly monitor inventory levels
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
+        </div>
+    </section>
+);
 }

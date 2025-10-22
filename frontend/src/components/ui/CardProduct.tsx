@@ -35,7 +35,7 @@ export default function CardProduct({
                     >
                         {quantity >= quantityLimit
                             ? `Qtd: ${quantity}`
-                            : `${quantity} remaining`}
+                            : `${quantity} restantes`}
                     </span>
                 </div>
                 <div className="flex justify-between items-center w-full mt-2">

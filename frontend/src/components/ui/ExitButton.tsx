@@ -21,10 +21,10 @@ export default function ExitButton() {
         <button
             className="flex items-center justify-between text-[15px] cursor-pointer w-full bg-black text-white p-2 rounded-md hover:bg-stone-950 duration-300 "
             onClick={handleLogout}
-            title="Sign Out"
-            aria-label="Exit button"
+            title="Sair"
+            aria-label="Botão de sair"
         >
-            Sign out
+            Sair
             <IoMdExit className="text-xl" />
         </button>
     );

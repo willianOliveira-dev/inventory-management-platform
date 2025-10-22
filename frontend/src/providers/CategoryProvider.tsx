@@ -1,6 +1,6 @@
 import CategoryContext from '../contexts/categoryContext';
 import categoryApi from '../api/categoryApi';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import { type Category } from '../types/entities/category';
 import { type ReactNode } from 'react';
 
@@ -11,7 +11,8 @@ export default function CategoryProvider({
 }) {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [categories, setCategories] = useState<Category[]>([]);
-    const [categorySelect, setCategorySelect] = useState<string>('All Categories');
+    const [categorySelect, setCategorySelect] =
+        useState<string>('Todas Categorias');
     const [active, setActive] = useState<number>(0);
     const [showCategories, setShowCategories] = useState<boolean>(false);
 
@@ -38,8 +39,8 @@ export default function CategoryProvider({
 
     const categoryList = useMemo(
         () => [
-            'All Categories',
-            'Low Stock',
+            'Todas Categorias',
+            'Estoque Baixo',
             ...categories.map(({ name }) => name),
         ],
         [categories]

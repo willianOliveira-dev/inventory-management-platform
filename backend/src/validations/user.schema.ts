@@ -1,9 +1,8 @@
 import * as z from 'zod';
-import emptyErrorMap from '@validations/error/emptyErrorMap';
 
 const UserSchema = z.object({
     name: z
-        .string({ error: emptyErrorMap })
+        .string({ error: 'O nome deve ser um texto.' })
         .nonempty({ error: 'O nome não pode ficar em branco.' })
         .min(3, { error: 'O nome deve ter no mínimo 3 caracteres.' })
         .max(50, { error: 'O nome deve ter no máximo 50 caracteres.' })
@@ -12,7 +11,7 @@ const UserSchema = z.object({
         })
         .transform((str) => str.trim()),
 
-    email: z.email({ error: 'Formato de e-mail inválido.' }),
+    email: z.email({ error: 'E-mail inválido.' }),
 
     password: z
         .string({ error: 'A senha deve ser uma string.' })

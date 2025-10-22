@@ -3,7 +3,7 @@ import type { Item } from '../types';
 export default function generateChartData(
     items: Item[],
     days: number
-): [{ day: string; count: number }[], number] {
+): [{ dia: string; quantidade: number }[], number] {
     const format = new Intl.DateTimeFormat('pt-BR', {
         day: '2-digit',
         month: '2-digit',
@@ -31,8 +31,8 @@ export default function generateChartData(
     });
 
     const recentProducts = Object.entries(counts).map(([day, count]) => ({
-        day,
-        count,
+        dia: day,
+        quantidade: count,
     }));
 
     const dayCount = items.filter(

@@ -22,11 +22,20 @@ import { RiHistoryFill } from 'react-icons/ri';
 import { LuLetterText } from 'react-icons/lu';
 import { FiAlertTriangle } from 'react-icons/fi';
 import { type Item } from '../types';
-
+import { toast } from 'sonner';
 
 export default function Product() {
     const [showPopUp, setShowPopUp] = useState<boolean>(false);
-    const { item_id, category_id, name, current_quantity, price_cents, description, created_at,updated_at,} = useLoaderData<Item>();
+    const {
+        item_id,
+        category_id,
+        name,
+        current_quantity,
+        price_cents,
+        description,
+        created_at,
+        updated_at,
+    } = useLoaderData<Item>();
     const { categoryIdsMap } = useCategories();
     const { removeItemFromState } = useItems();
     const navigate = useNavigate();
@@ -47,7 +56,7 @@ export default function Product() {
                         <ButtonLink
                             className="flex gap-2 items-center text-white p-2 md:p-3 rounded-md cursor-pointer hover:bg-stone-900 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:ring-offset-2 focus:ring-offset-gray-900"
                             to="/products"
-                            text="Back"
+                            text="Voltar"
                             icon={<FaArrowLeft />}
                         />
                     </div>
@@ -56,7 +65,7 @@ export default function Product() {
                             {name}
                         </h1>
                         <p className="text-white text-sm md:text-base">
-                            Full product details
+                            Detalhes completos do produto
                         </p>
                     </div>
                 </div>
@@ -64,28 +73,28 @@ export default function Product() {
                     <ButtonLink
                         className="flex gap-4 items-center text-white p-2 md:p-3 rounded-md cursor-pointer bg-blue-800 hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 focus:ring-offset-gray-900"
                         to={`/products/${item_id}/edit`}
-                        text="Edit"
+                        text="Editar"
                         icon={<FaEdit />}
                     />
                     <button
                         onClick={() => setShowPopUp(true)}
                         className="flex gap-4 items-center text-white p-2 md:p-3 rounded-md cursor-pointer bg-red-500 hover:bg-red-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 focus:ring-offset-gray-900"
                     >
-                        <IoTrashBinOutline /> <span>Remove</span>
+                        <IoTrashBinOutline /> <span>Remover</span>
                     </button>
                 </div>
             </header>
             <div className="flex flex-col lg:flex-row gap-6 w-full px-5">
                 <div className="w-full lg:w-2/3 space-y-4 p-4 ring ring-gray-700/40 rounded-md">
                     <h2 className="flex items-center gap-2 text-xl text-violet-400">
-                        <FaBoxOpen /> <span>Basic Information</span>
+                        <FaBoxOpen /> <span>Informações Básicas</span>
                     </h2>
                     <div className="flex flex-col gap-2 w-full text-gray-400">
                         <div className="flex flex-col sm:flex-row">
                             <div className="space-y-2 w-full sm:w-1/2 p-2">
                                 <div className="flex items-center gap-2 ">
                                     <FaHashtag />
-                                    <span>Quantity in stock</span>
+                                    <span>Quantidade em estoque</span>
                                 </div>
                                 <span
                                     className={`${
@@ -98,7 +107,7 @@ export default function Product() {
                                         <>
                                             {current_quantity}
                                             <span className="py-[2px] px-[8px] text-xs rounded-full text-white bg-red-500">
-                                                Low Stock
+                                                Estoque Baixo
                                             </span>
                                         </>
                                     ) : (
@@ -109,7 +118,7 @@ export default function Product() {
                             <div className="space-y-2 w-full sm:w-1/2 p-2">
                                 <div className="flex items-center gap-2">
                                     <FaDollarSign />
-                                    <span>Unit Price</span>
+                                    <span>Preço Unitário</span>
                                 </div>
                                 <span className="text-white text-xl font-bold px-2">
                                     {formatPrice(price_cents)}
@@ -119,7 +128,7 @@ export default function Product() {
                         <div className="space-y-2 p-2">
                             <div className="flex items-center gap-2">
                                 <IoPricetagsOutline />
-                                <span>Category</span>
+                                <span>Categoria</span>
                             </div>
                             <CategoryBadgeColored
                                 category={categoryIdsMap[category_id]}
@@ -128,7 +137,7 @@ export default function Product() {
                         <div className="space-y-2 p-2">
                             <div className="flex items-center gap-2">
                                 <LuLetterText />
-                                <span>Description</span>
+                                <span>Descrição</span>
                             </div>
                             <span className="text-white text-sm">
                                 {description}
@@ -139,7 +148,7 @@ export default function Product() {
 
                 <div className="w-full lg:w-1/3 space-y-4 text-gray-500">
                     <div className="flex flex-col gap-2 ring ring-gray-700/40 p-5">
-                        <h3 className="text-violet-400">Product status</h3>
+                        <h3 className="text-violet-400">Status do produto</h3>
                         <div className="flex flex-col gap-2">
                             <div className="flex justify-between">
                                 <span className="text-sm">Status:</span>
@@ -148,11 +157,13 @@ export default function Product() {
                                         hasStock ? 'bg-blue-500' : 'bg-red-500'
                                     } py-[2px] px-[8px] text-xs rounded-full text-white`}
                                 >
-                                    {hasStock ? 'In Stock' : 'Out of stock'}
+                                    {hasStock
+                                        ? 'Em Estoque'
+                                        : 'Fora de estoque'}
                                 </span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-sm">Total Value</span>
+                                <span className="text-sm">Valor Total</span>
                                 <span className="text-white">
                                     {formatPrice(
                                         price_cents * current_quantity
@@ -163,10 +174,10 @@ export default function Product() {
                                 <div className="bg-orange-200 rounded-md p-2">
                                     <div className="flex items-center gap-2 text-orange-900">
                                         <FiAlertTriangle className="text-orange-800" />
-                                        <span>Attention: Low stock</span>
+                                        <span>Atenção: Estoque baixo</span>
                                     </div>
                                     <span className="text-xs text-red-600">
-                                        Consider restocking this product
+                                        Considere reabastecer este produto
                                     </span>
                                 </div>
                             )}
@@ -176,13 +187,13 @@ export default function Product() {
                     <div className="flex flex-col gap-2 ring ring-gray-700/40 p-5">
                         <h3 className="flex items-center gap-2 text-violet-400">
                             <RiHistoryFill />
-                            <span>History</span>
+                            <span>Histórico</span>
                         </h3>
                         <div className="flex flex-col gap-2">
                             <div className="flex flex-col gap-2">
                                 <div className="flex items-center gap-2 text-sm">
                                     <FaRegCalendarAlt />
-                                    <span>Date Added</span>
+                                    <span>Data de Adição</span>
                                 </div>
                                 <span className="text-white">
                                     {formatDateTime(created_at!)}
@@ -191,7 +202,7 @@ export default function Product() {
                             <div className="flex flex-col gap-2">
                                 <div className="flex items-center gap-2 text-sm">
                                     <RiHistoryFill />
-                                    <span>Last Updated</span>
+                                    <span>Última Atualização</span>
                                 </div>
                                 <span className="text-white">
                                     {formatDateTime(updated_at!)}
@@ -201,12 +212,12 @@ export default function Product() {
                     </div>
 
                     <div className="flex flex-col gap-2 ring ring-gray-700/40 p-5">
-                        <h3 className="text-violet-400">Quick actions</h3>
+                        <h3 className="text-violet-400">Ações rápidas</h3>
                         <div className="flex flex-col gap-2">
                             <div>
                                 <ButtonLink
                                     className="flex gap-4 items-center justify-center text-white p-2 ring ring-gray-700/40 md:p-3 rounded-md cursor-pointer hover:bg-stone-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:ring-offset-2 focus:ring-offset-gray-900"
-                                    text="Edit Product"
+                                    text="Editar Produto"
                                     to={`/products/${item_id}/edit`}
                                     icon={<FaEdit />}
                                 />
@@ -214,7 +225,7 @@ export default function Product() {
                             <div>
                                 <ButtonLink
                                     className="flex gap-4 items-center justify-center text-white p-2 ring ring-gray-700/40 md:p-3 rounded-md cursor-pointer hover:bg-stone-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:ring-offset-2 focus:ring-offset-gray-900"
-                                    text="See all Products"
+                                    text="Ver todos os Produtos"
                                     to="/products"
                                     icon={<FaBoxOpen />}
                                 />
@@ -227,8 +238,12 @@ export default function Product() {
             {showPopUp && (
                 <PopUpConfirmation
                     setShowPopUp={setShowPopUp}
-                    message={`Are you sure you want to remove "${name}" from stock? This action cannot be undone.`}
+                    message={`Tem certeza que deseja remover "${name}" do estoque? Esta ação não pode ser desfeita.`}
                     onConfirm={() => {
+                        toast.success('Produto deletado com sucesso!', {
+                            position: 'bottom-right',
+                            richColors: true,
+                        });
                         removeItem(item_id!);
                         removeItemFromState(item_id!);
                         setShowPopUp(false);

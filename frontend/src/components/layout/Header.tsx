@@ -5,7 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 export default function Header() {
     const { user } = useAuth();
     const dateNow: number = Date.now();
-    const dateTimeFormat = new Intl.DateTimeFormat('en', {
+    const dateTimeFormat = new Intl.DateTimeFormat('pt-BR', {
         weekday: 'long',
         month: 'long',
         day: 'numeric',

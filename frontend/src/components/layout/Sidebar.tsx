@@ -1,20 +1,18 @@
 import Logo from '../../assets/logo.png';
 import ExitButton from '../ui/ExitButton';
-import { useState } from 'react';
 import { useEffect, useRef } from 'react';
 import { useBurgerMenu } from '../../hooks/useBurgerMenu';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { MdOutlineDashboard } from 'react-icons/md';
 import { IoPricetagsOutline } from 'react-icons/io5';
-import { FaBoxOpen } from 'react-icons/fa';
-import { FaChartBar } from 'react-icons/fa';
+import { FaBoxOpen, FaChartBar } from 'react-icons/fa';
 import { IoMdAdd } from 'react-icons/io';
 import { FiX } from 'react-icons/fi';
 
 export default function Sidebar() {
     const { showMenu, handleCloseMenu } = useBurgerMenu();
-    const [nav, setNav] = useState<string>('');
     const asideRef = useRef<HTMLElement>(null);
+    const location = useLocation();
 
     useEffect(() => {
         if (showMenu && window.innerWidth <= 1280) {
@@ -30,14 +28,14 @@ export default function Sidebar() {
 
     const links = [
         { to: '/', label: 'Dashboard', icon: <MdOutlineDashboard /> },
-        { to: '/products', label: 'Products', icon: <FaBoxOpen /> },
-        { to: '/products/new', label: 'Add Products', icon: <IoMdAdd /> },
+        { to: '/products', label: 'Produtos', icon: <FaBoxOpen /> },
+        { to: '/products/new', label: 'Adicionar Produtos', icon: <IoMdAdd /> },
         {
             to: '/categories',
-            label: 'Categories',
+            label: 'Categorias',
             icon: <IoPricetagsOutline />,
         },
-        { to: '/reports', label: 'Reports', icon: <FaChartBar /> },
+        { to: '/reports', label: 'Relatórios', icon: <FaChartBar /> },
     ];
 
     return (
@@ -78,25 +76,29 @@ export default function Sidebar() {
                         <div className="flex flex-col justify-between h-full">
                             <ul className="flex flex-col gap-2">
                                 {links.map((link, idx) => {
+                                    const isActive =
+                                        location.pathname === link.to;
                                     return (
                                         <li key={idx}>
                                             <Link
-                                                className={`flex items-center gap-4 text-violet-400 p-2 rounded-xl text-violet-300 ${
-                                                    nav === link.to
+                                                className={`flex items-center gap-4 text-violet-400 p-2 rounded-md ${
+                                                    isActive
                                                         ? 'bg-violet-400/30'
                                                         : 'hover:bg-violet-400/30 duration-400 ease-in'
                                                 }`}
                                                 to={link.to}
                                                 onClick={() => {
-                                                    setNav(link.to);
-                                                    if(showMenu && window.innerWidth <= 1280) {
-                                                        handleCloseMenu()
+                                                    if (
+                                                        showMenu &&
+                                                        window.innerWidth <=
+                                                            1280
+                                                    ) {
+                                                        handleCloseMenu();
                                                     }
-
                                                 }}
-                                                aria-label={`${link.label} Link`}
+                                                aria-label={`Link ${link.label}`}
                                                 aria-current={
-                                                    nav == link.to
+                                                    isActive
                                                         ? 'page'
                                                         : undefined
                                                 }

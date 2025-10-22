@@ -16,10 +16,13 @@ import { IoSearch } from 'react-icons/io5';
 import { FaBoxOpen, FaEye, FaPen } from 'react-icons/fa';
 import { BsBoxSeam } from 'react-icons/bs';
 import { type Item } from '../types';
+import { toast } from 'sonner';
 
 export default function Products() {
     const [showPopUp, setShowPopUp] = useState<boolean>(false);
-    const [selectProduct, setSelectProduct] = useState< Pick<Item, 'item_id' | 'name'>>({ item_id: '', name: '' });
+    const [selectProduct, setSelectProduct] = useState<
+        Pick<Item, 'item_id' | 'name'>
+    >({ item_id: '', name: '' });
     const [search, setSearch] = useState<string>('');
     const { items, isLoading, removeItemFromState } = useItems();
     const categoriesFilter = useCategories();
@@ -32,31 +35,36 @@ export default function Products() {
                 .includes(search.toLowerCase());
 
             const categoryMatch: boolean =
-                categoriesFilter.categorySelect === 'All Categories' ||
-                (categoriesFilter.categorySelect == 'Low Stock' &&
+                categoriesFilter.categorySelect === 'Todas Categorias' ||
+                (categoriesFilter.categorySelect == 'Estoque Baixo' &&
                     item.current_quantity < 10) ||
                 categoriesFilter.categoryIdsMap[item.category_id] ===
                     categoriesFilter.categorySelect;
 
             return nameMatch && categoryMatch;
         });
-    }, [search, items, categoriesFilter.categoryIdsMap, categoriesFilter.categorySelect]);
+    }, [
+        search,
+        items,
+        categoriesFilter.categoryIdsMap,
+        categoriesFilter.categorySelect,
+    ]);
 
     return (
         <section className="flex flex-col gap-6 p-4 md:p-6">
             <header className="flex flex-col gap-4 py-4 px-2 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-1">
                     <h1 className="text-indigo-500 text-4xl lg:text-5xl font-bold tracking-tighter">
-                        Products
+                        Produtos
                     </h1>
                     <p className="text-white text-sm md:text-base">
-                        Manage all the products in your inventory
+                        Gerencie todos os produtos do seu inventário
                     </p>
                 </div>
                 <ButtonLink
                     className="flex gap-2 items-center text-white p-2 md:p-3 rounded-md cursor-pointer bg-sky-500 hover:bg-sky-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-gray-900"
                     to="/products/new"
-                    text="Add Product"
+                    text="Adicionar Produto"
                     icon={<IoMdAdd />}
                 />
             </header>
@@ -64,7 +72,7 @@ export default function Products() {
                 <div className="flex flex-col items-center sm:flex-row gap-4 py-4 px-4 bg-stone-900 rounded-md shadow-lg">
                     <div className="relative flex-1">
                         <label htmlFor="product-search" className="sr-only">
-                            Search products
+                            Pesquisar produtos
                         </label>
                         <input
                             id="product-search"
@@ -72,7 +80,7 @@ export default function Products() {
                             type="text"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Search product..."
+                            placeholder="Pesquisar produto..."
                             aria-describedby="search-help"
                         />
                         <IoSearch
@@ -80,7 +88,7 @@ export default function Products() {
                             aria-hidden="true"
                         />
                         <div id="search-help" className="sr-only">
-                            Type product name to search
+                            Digite o nome do produto para pesquisar
                         </div>
                     </div>
                     <ButtonFilterCategories />
@@ -89,7 +97,7 @@ export default function Products() {
             <div className="space-y-2 mt-4 py-4 px-2 bg-stone-900 rounded-md">
                 <h2 className="flex items-center px-4 gap-2 text-white text-2xl font-bold tracking-tighter">
                     <FaBoxOpen />
-                    <span>Product List ({productsFilter.length})</span>
+                    <span>Lista de Produtos ({productsFilter.length})</span>
                 </h2>
 
                 <div>
@@ -100,13 +108,17 @@ export default function Products() {
                             <table className="min-w-full text-gray-100">
                                 <thead>
                                     <tr className="text-white text-left text-sm uppercase tracking-wider border-b border-gray-700">
-                                        <th className="px-4 py-3">Product</th>
-                                        <th className="px-4 py-3">Category</th>
-                                        <th className="px-4 py-3">Quantity</th>
-                                        <th className="px-4 py-3">Price</th>
-                                        <th className="px-4 py-3">Added</th>
+                                        <th className="px-4 py-3">Produto</th>
+                                        <th className="px-4 py-3">Categoria</th>
+                                        <th className="px-4 py-3">
+                                            Quantidade
+                                        </th>
+                                        <th className="px-4 py-3">Preço</th>
+                                        <th className="px-4 py-3">
+                                            Adicionado
+                                        </th>
                                         <th className="px-4 py-3 text-center">
-                                            Action
+                                            Ações
                                         </th>
                                     </tr>
                                 </thead>
@@ -144,7 +156,8 @@ export default function Products() {
                                                 <td className="px-4 py-3 whitespace-nowrap">
                                                     <CategoryBadgeColored
                                                         category={
-                                                            categoriesFilter.categoryIdsMap[
+                                                            categoriesFilter
+                                                                .categoryIdsMap[
                                                                 category_id
                                                             ]
                                                         }
@@ -157,7 +170,7 @@ export default function Products() {
                                                         <div className="flex items-center gap-2 text-red-500">
                                                             {current_quantity}{' '}
                                                             <span className="text-xs text-white bg-red-500 py-[2px] px-2 rounded-full">
-                                                                Low
+                                                                Baixo
                                                             </span>
                                                         </div>
                                                     )}
@@ -214,15 +227,15 @@ export default function Products() {
                             <span className="text-3xl text-sky-500 w-10 h-10">
                                 <BsBoxSeam className="size-full" />
                             </span>
-                            <p>No products found</p>
+                            <p>Nenhum produto encontrado</p>
                             <p className="font-light text-gray-300 text-sm">
-                                Try adjusting the filters or creating a new
-                                product.
+                                Tente ajustar os filtros ou criar um novo
+                                produto.
                             </p>
                             <ButtonLink
                                 className="flex gap-2 items-center text-white p-2 md:p-3 rounded-md cursor-pointer bg-sky-500 hover:bg-sky-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-gray-900"
                                 to="/products/new"
-                                text="Add Product"
+                                text="Adicionar Produto"
                                 icon={<IoMdAdd />}
                             />
                         </div>
@@ -232,8 +245,12 @@ export default function Products() {
             {showPopUp && (
                 <PopUpConfirmation
                     setShowPopUp={setShowPopUp}
-                    message={`Are you sure you want to remove "${selectProduct.name}" from stock? This action cannot be undone.`}
+                    message={`Tem certeza que deseja remover "${selectProduct.name}" do estoque? Esta ação não pode ser desfeita.`}
                     onConfirm={() => {
+                        toast.success('Produto deletado com sucesso!', {
+                            position: 'bottom-right',
+                            richColors: true,
+                        });
                         removeItem(selectProduct.item_id!);
                         removeItemFromState(selectProduct.item_id!);
                         navigate('/products');
@@ -241,7 +258,6 @@ export default function Products() {
                     }}
                 />
             )}
-            
         </section>
     );
 }

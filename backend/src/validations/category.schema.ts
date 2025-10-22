@@ -1,9 +1,8 @@
 import * as z from 'zod';
-import emptyErrorMap from '@validations/error/emptyErrorMap';
 
 const CategorySchema = z.object({
     name: z
-        .string({ error: emptyErrorMap })
+        .string({ error: 'O nome deve ser um texto.' })
         .nonempty({ error: 'O nome não pode ficar em branco.' })
         .min(3, {
             error: 'O nome da categoria deve ter no mínimo 3 caracteres.',

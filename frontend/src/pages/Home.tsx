@@ -30,7 +30,6 @@ import {
     Area,
 } from 'recharts';
 
-
 const LOW_STOCK_COLORS = ['#FF8042', '#00C49F'];
 
 export default function Home() {
@@ -64,14 +63,14 @@ export default function Home() {
         const category = categories.find(
             (cat) => cat.category_id === categoryId
         );
-        return category ? category.name : `Category ${categoryId}`;
+        return category ? category.name : `Categoria ID:${categoryId}`;
     };
 
     // Dados para o gráfico de pizza (estoque normal vs baixo estoque)
     const stockPieData = useMemo(
         () => [
-            { name: 'Normal Stock', value: items.length - lowStock },
-            { name: 'Low Stock', value: lowStock },
+            { name: 'Estoque normal', value: items.length - lowStock },
+            { name: 'Baixo estoque', value: lowStock },
         ],
         [items, lowStock]
     );
@@ -87,9 +86,9 @@ export default function Home() {
             categoriesMap[categoryName] += item.current_quantity;
         });
 
-        return Object.entries(categoriesMap).map(([name, value]) => ({
-            name,
-            value,
+        return Object.entries(categoriesMap).map(([nome, quantidade]) => ({
+            nome,
+            quantidade,
         }));
     }, [items, categories]);
 
@@ -105,9 +104,9 @@ export default function Home() {
                 item.price_cents * item.current_quantity;
         });
 
-        return Object.entries(categoriesMap).map(([name, value]) => ({
-            name,
-            value: value / 100,
+        return Object.entries(categoriesMap).map(([nome, valor]) => ({
+            nome,
+            valor: valor / 100,
         }));
     }, [items, categories]);
 
@@ -122,9 +121,9 @@ export default function Home() {
             categoriesMap[categoryName] += 1;
         });
 
-        return Object.entries(categoriesMap).map(([name, value]) => ({
-            name,
-            products: value,
+        return Object.entries(categoriesMap).map(([nome, valor]) => ({
+            nome,
+            produtos: valor,
         }));
     }, [items, categories]);
 
@@ -142,13 +141,13 @@ export default function Home() {
                 />
                 <div className="space-y-3 z-10 relative">
                     <h2 className="font-[Vidaloka] text-3xl text-purple-100 tracking-wise">
-                        Hello, <span className="text-white">{user?.name}!</span>
+                        Olá, <span className="text-white">{user?.name}!</span>
                     </h2>
                     <h1 className="text-white text-5xl font-bold tracking-tighter">
                         Dashboard
                     </h1>
                     <p className="text-purple-100 text-lg">
-                        Welcome to your inventory management system
+                        Bem-vindo ao seu sistema de gerenciamento de estoque
                     </p>
                 </div>
             </div>
@@ -157,7 +156,7 @@ export default function Home() {
                 <>
                     {/* Filtro de tempo */}
                     <div className="flex justify-end items-center gap-4 bg-stone-800 p-3 rounded-lg">
-                        <span className="text-gray-300">Time Range:</span>
+                        <span className="text-gray-300">Período:</span>
                         <select
                             value={timeRange}
                             onChange={(e) =>
@@ -165,42 +164,42 @@ export default function Home() {
                             }
                             className="bg-stone-700 text-white px-3 py-1 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
                         >
-                            <option value={7}>Last 7 days</option>
-                            <option value={10}>Last 10 days</option>
-                            <option value={30}>Last 30 days</option>
+                            <option value={7}>Últimos 7 dias</option>
+                            <option value={10}>Últimos 10 dias</option>
+                            <option value={30}>Últimos 30 dias</option>
                         </select>
                     </div>
 
                     {/* Cards de resumo */}
                     <div className="grid grid-cols-4 gap-4 w-full max-lg:grid-cols-2 max-sm:grid-cols-1">
                         <ReportCardView
-                            label="Total Products"
+                            label="Total de Produtos"
                             data={String(items.length)}
-                            description="Different types of products"
+                            description="Tipos diferentes de produtos"
                             icon={
                                 <FaBoxOpen className="size-full p-[5px] bg-purple-500 rounded-full" />
                             }
                         />
                         <ReportCardView
-                            label="Total Items"
+                            label="Total de Itens"
                             data={String(totalItems)}
-                            description="Total data in stock"
+                            description="Total de dados em estoque"
                             icon={
                                 <LuChartNoAxesCombined className="size-full  p-[5px] bg-green-400 rounded-full" />
                             }
                         />
                         <ReportCardView
-                            label={`Added (${days} days)`}
+                            label={`Adicionados (${days} dias)`}
                             data={String(dayCount)}
-                            description="Newly added products"
+                            description="Produtos recém-adicionados"
                             icon={
                                 <IoCalendarNumberOutline className="size-full p-[5px] bg-blue-400 rounded-full" />
                             }
                         />
                         <ReportCardView
-                            label="Low Stock"
+                            label="Estoque Baixo"
                             data={String(lowStock)}
-                            description="Products with less than 10 units"
+                            description="Produtos com menos de 10 unidades"
                             icon={
                                 <FiAlertTriangle className="size-full p-[5px] bg-red-400 rounded-full" />
                             }
@@ -213,7 +212,7 @@ export default function Home() {
                         <div className="bg-stone-900 p-6 rounded-xl shadow-md ring-1 ring-gray-700">
                             <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                                 <IoCalendarNumberOutline className="text-blue-400" />
-                                Products Added (Last {days} Days)
+                                Produtos Adicionados (Últimos {days} Dias)
                             </h3>
                             <div className="h-80">
                                 <ResponsiveContainer width="100%" height="100%">
@@ -250,7 +249,7 @@ export default function Home() {
                                             strokeDasharray="3 3"
                                             stroke="#444"
                                         />
-                                        <XAxis dataKey="day" stroke="#aaa" />
+                                        <XAxis dataKey="dia" stroke="#aaa" />
                                         <YAxis stroke="#aaa" />
                                         <Tooltip
                                             contentStyle={{
@@ -261,7 +260,7 @@ export default function Home() {
                                         />
                                         <Area
                                             type="monotone"
-                                            dataKey="count"
+                                            dataKey="quantidade"
                                             stroke="#8884d8"
                                             fillOpacity={1}
                                             fill="url(#colorCount)"
@@ -275,7 +274,7 @@ export default function Home() {
                         <div className="bg-stone-900 p-6 rounded-xl shadow-md ring-1 ring-gray-700">
                             <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                                 <FiAlertTriangle className="text-red-400" />
-                                Stock Status
+                                Status do Estoque
                             </h3>
                             <div className="h-80">
                                 <ResponsiveContainer width="100%" height="100%">
@@ -349,7 +348,7 @@ export default function Home() {
                         <div className="bg-stone-900 p-6 rounded-xl shadow-md ring-1 ring-gray-700">
                             <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                                 <LuChartNoAxesCombined className="text-green-400" />
-                                Quantity by Category
+                                Quantidade por Categoria
                             </h3>
                             <div className="h-80">
                                 <ResponsiveContainer width="100%" height="100%">
@@ -367,7 +366,7 @@ export default function Home() {
                                             stroke="#444"
                                         />
                                         <XAxis
-                                            dataKey="name"
+                                            dataKey="nome"
                                             stroke="#aaa"
                                             angle={-45}
                                             textAnchor="end"
@@ -381,7 +380,10 @@ export default function Home() {
                                                 color: 'white',
                                             }}
                                         />
-                                        <Bar dataKey="value" fill="#8884d8" />
+                                        <Bar
+                                            dataKey="quantidade"
+                                            fill="#8884d8"
+                                        />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
@@ -391,7 +393,7 @@ export default function Home() {
                         <div className="bg-stone-900 p-6 rounded-xl shadow-md ring-1 ring-gray-700">
                             <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                                 <FaBoxOpen className="text-purple-400" />
-                                Total Value by Category
+                                Valor Total por Categoria
                             </h3>
                             <div className="h-80">
                                 <ResponsiveContainer width="100%" height="100%">
@@ -409,7 +411,7 @@ export default function Home() {
                                             stroke="#444"
                                         />
                                         <XAxis
-                                            dataKey="name"
+                                            dataKey="nome"
                                             stroke="#aaa"
                                             angle={-45}
                                             textAnchor="end"
@@ -421,7 +423,7 @@ export default function Home() {
                                                 formatPrice(
                                                     (value as number) * 100
                                                 ),
-                                                'Total Value',
+                                                'Valor Total',
                                             ]}
                                             contentStyle={{
                                                 backgroundColor: '#2d3748',
@@ -429,7 +431,7 @@ export default function Home() {
                                                 color: 'white',
                                             }}
                                         />
-                                        <Bar dataKey="value" fill="#00C49F" />
+                                        <Bar dataKey="valor" fill="#00C49F" />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
@@ -439,7 +441,7 @@ export default function Home() {
                         <div className="bg-stone-900 p-6 rounded-xl shadow-md ring-1 ring-gray-700 lg:col-span-2">
                             <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                                 <FaBoxOpen className="text-purple-400" />
-                                Products Distribution by Category
+                                Distribuição de Produtos por Categoria
                             </h3>
                             <div className="h-80">
                                 <ResponsiveContainer width="100%" height="100%">
@@ -460,7 +462,7 @@ export default function Home() {
                                         <XAxis type="number" stroke="#aaa" />
                                         <YAxis
                                             type="category"
-                                            dataKey="name"
+                                            dataKey="nome"
                                             stroke="#aaa"
                                             width={100}
                                         />
@@ -472,7 +474,7 @@ export default function Home() {
                                             }}
                                         />
                                         <Bar
-                                            dataKey="products"
+                                            dataKey="produtos"
                                             fill="#8884d8"
                                             radius={[0, 4, 4, 0]}
                                         />
@@ -495,7 +497,7 @@ export default function Home() {
                         <div className="flex flex-col w-full lg:w-1/2 p-4 ring-1 ring-gray-600 bg-stone-900 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg">
                             <h2 className="flex gap-2 items-center p-4 tracking-tighter text-xl font-semibold border-b border-gray-700 pb-3">
                                 <IoCalendarNumberOutline className="text-blue-400" />
-                                Recent products (last {days} days)
+                                Produtos recentes (últimos {days} dias)
                             </h2>
                             <div className="flex flex-col gap-4 pb-4 px-2 mt-2">
                                 <div className="flex flex-col gap-3">
@@ -541,17 +543,17 @@ export default function Home() {
                                 <ButtonLink
                                     to={'/products'}
                                     onClick={() => {
-                                        setCategorySelect('All Categories');
+                                        setCategorySelect('Todas Categorias');
                                     }}
                                     className="border-2 border-purple-600 text-purple-600 text-center px-8 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-violet-600 hover:text-white hover:shadow-md hover:border-violet-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
-                                    text="See all Products"
+                                    text="Ver todos os Produtos"
                                 />
                             </div>
                         </div>
                         <div className="flex flex-col w-full lg:w-1/2 p-4 ring-1 ring-gray-600 bg-stone-900 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg">
                             <h2 className="flex gap-2 items-center p-4 tracking-tighter text-xl font-semibold border-b border-gray-700 pb-3">
                                 <FiAlertTriangle className="text-red-400" />
-                                Low Stock (less than 10 units)
+                                Estoque Baixo (menos de 10 unidades)
                             </h2>
                             <div className="flex flex-col gap-4 pb-4 px-2 mt-2">
                                 {items.some(
@@ -595,10 +597,12 @@ export default function Home() {
                                         <ButtonLink
                                             to={'/products'}
                                             onClick={() => {
-                                                setCategorySelect('Low Stock');
+                                                setCategorySelect(
+                                                    'Estoque Baixo'
+                                                );
                                             }}
                                             className="justify-self-end border-2 border-purple-600 text-purple-600 text-center px-8 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-violet-600 hover:text-white hover:shadow-md hover:border-violet-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
-                                            text="View all low stock items"
+                                            text="Ver todos os itens com estoque baixo"
                                         />
                                     </>
                                 ) : (
@@ -607,12 +611,12 @@ export default function Home() {
                                             <span>✓</span>
                                         </div>
                                         <h3 className="font-bold text-green-400 text-xl">
-                                            Congratulations!
+                                            Parabéns!
                                         </h3>
                                         <p className="text-sm text-center text-gray-300">
-                                            All product stocks are fully
-                                            stocked. Excellent management and
-                                            planning work!
+                                            Todos os estoques de produtos estão
+                                            totalmente abastecidos. Excelente
+                                            trabalho de gestão e planejamento!
                                         </p>
                                         <div className="flex gap-5 text-center px-5 py-3 rounded-md bg-amber-100 shadow-inner mt-2">
                                             <div className="flex items-center flex-col gap-1">
@@ -620,7 +624,7 @@ export default function Home() {
                                                     100%
                                                 </span>
                                                 <span className="text-xs text-gray-600">
-                                                    Current Stock
+                                                    Estoque Atual
                                                 </span>
                                             </div>
                                             <div className="flex items-center flex-col gap-1">
@@ -628,7 +632,7 @@ export default function Home() {
                                                     0
                                                 </span>
                                                 <span className="text-xs text-gray-600">
-                                                    Missing Products
+                                                    Produtos Faltantes
                                                 </span>
                                             </div>
                                             <div className="flex items-center flex-col gap-1">
@@ -636,7 +640,7 @@ export default function Home() {
                                                     100%
                                                 </span>
                                                 <span className="text-xs text-gray-600">
-                                                    Availability
+                                                    Disponibilidade
                                                 </span>
                                             </div>
                                         </div>
@@ -651,15 +655,16 @@ export default function Home() {
                             <BsBoxSeam className="size-full" />
                         </span>
                         <h3 className="font-medium text-lg">
-                            No products found
+                            Nenhum produto encontrado
                         </h3>
                         <p className="font-light text-gray-300 text-sm">
-                            Start by adding your first product to inventory.
+                            Comece adicionando seu primeiro produto ao
+                            inventário.
                         </p>
                         <ButtonLink
                             className="flex gap-2 items-center text-white p-3 rounded-lg cursor-pointer bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 focus:ring-offset-gray-900 mt-2"
                             to="/products/new"
-                            text="Add Product"
+                            text="Adicionar Produto"
                             icon={<IoMdAdd />}
                         />
                     </div>
